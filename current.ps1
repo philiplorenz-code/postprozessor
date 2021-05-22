@@ -23,6 +23,108 @@ $tmpFiles = @()
 $tmpFiles2 = @()
 $outFiles = @()
 
+function Add-StringBefore {
+    param (
+        [array]$insert,
+        [string]$keyword,
+        # in $textfile muss eigentlich immer $Prog.CamPath übergeben werden
+        [string]$textfile,
+        [boolean]$bc
+    )
+    Write-Host "Das ist der insert: $insert"
+    Write-Host "Das ist das keyword: $keyword"
+    Write-Host "Das ist der PFad: $textfile"
+
+    $content = Get-Content $textfile
+
+    Write-Host "Das ist der aktuelle inhalt: $content"
+    $counter = 0
+    $keywordcomplete = ""
+    foreach ($string in $content) {
+
+        if ($string -like "*$keyword*") {
+            $keywordcomplete = $string
+
+            $content[$counter] = ""
+            for ($i = 0; $i -lt $insert.Count; $i++) {
+                $content[$counter] = $content[$counter] + $insert[$i] + "`n" 
+            }
+            if ($bc){
+                $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
+                $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
+                $keywordcomplete = $keywordcomplete + ", -1, -1, -1, 0, true, true, 0, 5);"
+                $content[$counter] = $content[$counter] + $keywordcomplete
+            }
+            else {
+                $content[$counter] = $content[$counter] + $keywordcomplete + "`n" 
+            }
+            
+        }
+        $counter++
+    }
+    if ($bc){
+        $dir = (Get-Item $textfile).Directory.FullName 
+        $filename = "!!!" + ((Get-Item $textfile).Name)
+        $newsave = $dir + "\" + $filename
+        $content | Out-File $newsave
+        Remove-Item $textfile
+    }
+    else {
+        $content | Out-File $textfile
+    }
+
+
+}
+
+function Correct-M200 {
+    $file2 = (Get-ChildItem "AUSGABEPFAD" | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
+    $count = 0
+    $content = Get-Content $file2
+    foreach ($line in $content) {
+        if ($line -like "*CreateRawWorkpiece*"){
+            $stringarray = $string.split(",")
+            $newarray = @()
+            $newarray += $stringarray[0]
+            $newarray += ","
+            for ($i = 1; $i -lt $stringarray.Count; $i++) {
+                if ($i -eq 1){
+                }
+                else {
+                    $newarray += ","
+                }
+                $newarray[$i] += "0.0000"
+            } 
+
+            [string]$output = $newarray
+            $output = $output -replace '\s',''
+            $content[$count] = $output
+
+        }
+        if ($line -like "*SetWorkpieceSetupPosition*"){
+            $stringarray = $string.split(",")
+            $newarray = @()
+            $newarray += $stringarray[0]
+            $newarray += ","
+            for ($i = 1; $i -lt $stringarray.Count; $i++) {
+                if ($i -eq 1){
+                }
+                else {
+                    $newarray += ","
+                }
+                $newarray[$i] += "0.0000"
+            } 
+
+            [string]$output = $newarray
+            $output = $output -replace '\s',''
+            $content[$count] = $output
+
+        }
+    $count++
+    }
+
+    $output | Out-File $file2
+
+}
 
 foreach ($Prog in $input) {
     (Get-Content $Prog.CamPath) | Foreach-Object {
@@ -40,59 +142,7 @@ foreach ($Prog in $input) {
     # An- und Abfahrbewegung im bogen bohrend für Umfräsung
 
     # Diese Funktion ermöglicht das Einfügen von Zeilen vor einem definierten Keyword!
-    function Add-StringBefore {
-        param (
-            [array]$insert,
-            [string]$keyword,
-            # in $textfile muss eigentlich immer $Prog.CamPath übergeben werden
-            [string]$textfile,
-            [boolean]$bc
-        )
-        Write-Host "Das ist der insert: $insert"
-        Write-Host "Das ist das keyword: $keyword"
-        Write-Host "Das ist der PFad: $textfile"
 
-        $content = Get-Content $textfile
-
-        Write-Host "Das ist der aktuelle inhalt: $content"
-        $indexarray = @()
-        $counter = 0
-        $keywordcomplete = ""
-        foreach ($string in $content) {
-
-            if ($string -like "*$keyword*") {
-                $keywordcomplete = $string
-
-                $content[$counter] = ""
-                for ($i = 0; $i -lt $insert.Count; $i++) {
-                    $content[$counter] = $content[$counter] + $insert[$i] + "`n" 
-                }
-                if ($bc){
-                    $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
-                    $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
-                    $keywordcomplete = $keywordcomplete + ", -1, -1, -1, 0, true, true, 0, 5);"
-                    $content[$counter] = $content[$counter] + $keywordcomplete
-                }
-                else {
-                    $content[$counter] = $content[$counter] + $keywordcomplete + "`n" 
-                }
-                
-            }
-            $counter++
-        }
-        if ($bc){
-            $dir = (Get-Item $textfile).Directory.FullName 
-            $filename = "!!!" + ((Get-Item $textfile).Name)
-            $newsave = $dir + "\" + $filename
-            $content | Out-File $newsave
-            Remove-Item $textfile
-        }
-        else {
-            $content | Out-File $textfile
-        }
-
-    
-    }
 
     # Approach- und RetractStrategie ersetzen
     foreach ($command in (Get-Content $Prog.CamPath)) {
@@ -127,7 +177,7 @@ foreach ($Prog in $input) {
     $textfile = $Prog.CamPath
     Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
 
-    
+
 }
 
 

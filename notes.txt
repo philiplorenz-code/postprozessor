@@ -1,10 +1,9 @@
 # current wird immer ausgeführt
 - 33 und 34 funktionieren in 42-64 ##
 - Zeile 10-12 drin lassen ##
-- Wenn einmal vorhanden gehts, wenn mehrmal unzuverlässig:
-    Zeile 69-146; : CreateSlot
-    wenn mehrmals: nur das erste ersetzte
-- Zeile 17: spricht Werkzeugdatei def an
+- Wenn einmal vorhanden gehts, wenn mehrmal unzuverlässig: ##
+    Zeile 69-146; : CreateSlot ##
+    wenn mehrmals: nur das erste ersetzte ##
 
 
 #m200

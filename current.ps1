@@ -126,7 +126,7 @@ foreach ($Prog in $input) {
     $keywordblatt = "CreateBladeCut"
     $textfile = $Prog.CamPath
     Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
-
+#
 }
 
 

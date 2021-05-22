@@ -16,40 +16,8 @@
 
 
 - zusammenführen!!
-
-
-
-if indexarray gt 0 oben direkt mit reinnehmen!!
-
-
-
-
-
-
-    # An- und Abfahrbewegung fliegend bohrend für Nut
-    $insertnut = @()
-    $insertnut += 'SetApproachStrategy(true, false, 1.5);'
-    $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
-    $keywordnut = "CreateSlot"
-    $textfile = $item.Fullname
-    Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
-
-    # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
-    $inserttasche = @()
-    $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
-    $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
-    $keywordtasche = "CreateContourPocket"
-    $textfile = $item.Fullname
-    Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
-    
-	
-    # Vorritzen, an- und abfahren mit dem Sägeblatt
-    $insertblatt = @()
-    $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
-    $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
-    $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
-    $keywordblatt = "CreateBladeCut"
-    $textfile = $item.Fullname
-    Add-StringBefore -insert $insertblatt -keywordtasche $keywordblatt -textfile $textfile -bc $true
-    
-}
+- Werkzeugselektion bei m/x200
+- Unterscheidung der Funktionen nach Button
+- Icon und Name von GUI
+- GUI im Vordergrund
+- explorer öffnen mit ii "PFAD"

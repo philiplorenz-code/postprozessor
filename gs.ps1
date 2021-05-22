@@ -6,7 +6,7 @@
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $Xaml = @"
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="800" Height="550">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="800" Height="550" Topmost="True">
 <Grid>
 <TabControl Margin="1,0,-1,0" SelectedIndex="{Binding tabIndex}" Name="name">
      <TabItem Visibility="Collapsed" Header="Auswahl"><Grid Margin="0,-2,0,2" Name="selection" Background="#9b9b9b">
@@ -204,5 +204,7 @@ Start-RunspaceTask $JobCleanupScript @([PSObject]@{ Name='Jobs' ; Variable=$Jobs
 
 
 $Window.ShowDialog()
+$Window.activate()
+
 
 

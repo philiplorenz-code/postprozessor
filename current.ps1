@@ -125,7 +125,7 @@ foreach ($Prog in $input) {
     $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
     $keywordblatt = "CreateBladeCut"
     $textfile = $Prog.CamPath
-    Add-StringBefore -insert $insertblatt -keywordtasche $keywordblatt -textfile $textfile -bc $true
+    Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
 
 }
 

@@ -26,6 +26,8 @@ $outFiles = @()
 # Hier werden die FilePaths reingepackt, welche um die 3 ! erweitert werden sollen
 $exclamtionmarks = @()
 
+$workingdir = (get-item ($input.CamPath[0])).Directory
+
 function Add-StringBefore {
     param (
         [array]$insert,
@@ -93,7 +95,7 @@ function Set-Exlamationmarks {
 }
 
 function Correct-M200 {
-    $file2 = (Get-ChildItem "AUSGABEPFAD" | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
+    $file2 = (Get-ChildItem $workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
     $count = 0
     $content = Get-Content $file2
     foreach ($line in $content) {
@@ -162,7 +164,7 @@ foreach ($Prog in $input) {
 
     # Approach- und RetractStrategie ersetzen
     $approachretractcontent = Get-Content $Prog.CamPath
-    foreach ($command in approachretractcontent) {
+    foreach ($command in $approachretractcontent) {
         $command.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)")
         $command.Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
     }

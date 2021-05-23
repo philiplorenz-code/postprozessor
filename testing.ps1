@@ -105,3 +105,16 @@ foreach ($item in (get-childitem "C:\Users\saigon\Desktop\dateien\Vorher-Nachher
     
  
 }
+
+
+
+
+[CmdletBinding()]
+Param(
+    $SystemPath, # the value can be set in PYTHA Interface Setup
+    $SystemCommand, # the value can be set in PYTHA Interface Setup
+    $SystemProfile, # the value can be set in PYTHA Interface Setup
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Program
+)
+write-host $input
+Start-Sleep -Seconds 1000

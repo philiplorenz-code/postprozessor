@@ -96,6 +96,7 @@ function Set-Exlamationmarks {
 
 function Correct-M200 {
     $file2 = (Get-ChildItem $workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
+    Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
     $content = Get-Content $file2
     foreach ($line in $content) {
@@ -115,6 +116,10 @@ function Correct-M200 {
 
             [string]$output = $newarray
             $output = $output -replace '\s',''
+            $output = $output + ");"
+            $dbg = $content[$count]
+            Write-Host "Diese ContentLine wird geändert: $dbg" -ForegroundColor Green
+            Write-Host "In: $output" -ForegroundColor Green
             $content[$count] = $output
 
         }
@@ -134,6 +139,10 @@ function Correct-M200 {
 
             [string]$output = $newarray
             $output = $output -replace '\s',''
+            $output = $output + ");"
+            $dbg = $content[$count]
+            Write-Host "Diese ContentLine wird geändert: $dbg" -ForegroundColor Green
+            Write-Host "In: $output" -ForegroundColor Green
             $content[$count] = $output
 
         }

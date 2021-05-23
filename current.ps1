@@ -146,7 +146,7 @@ function Correct-M200 {
             $content[$count] = $output
 
         }
-    $count++
+        $count++
     }
 
     $output | Out-File $file2
@@ -224,10 +224,10 @@ function convert-xcs-to-pgmx {
     Write-Host "Remove tmpFiles : $tmpFiles" -ForegroundColor Green
     $gci = (gci $workingdir).Name
     Write-Host " Dateien vor Löschversuch: $gci" -ForegroundColor Green
-    Remove-Item $tmpFiles  
+    #Remove-Item $tmpFiles  
 	
     # Loesche die temporaeren Dateien
-    Remove-Item $tmpFiles2
+    # Remove-Item $tmpFiles2
 }
 
 foreach ($Prog in $input) {

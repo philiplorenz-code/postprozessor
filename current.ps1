@@ -23,6 +23,9 @@ $tmpFiles = @()
 $tmpFiles2 = @()
 $outFiles = @()
 
+# Hier werden die FilePaths reingepackt, welche um die 3 ! erweitert werden sollen
+$exclamtionmarks = @()
+
 function Add-StringBefore {
     param (
         [array]$insert,
@@ -43,6 +46,10 @@ function Add-StringBefore {
     foreach ($string in $content) {
 
         if ($string -like "*$keyword*") {
+            if ($bc){
+                $exclamtionmarks += $textfile
+            }
+
             $keywordcomplete = $string
 
             $content[$counter] = ""
@@ -62,18 +69,27 @@ function Add-StringBefore {
         }
         $counter++
     }
-    if ($bc){
-        $dir = (Get-Item $textfile).Directory.FullName 
-        $filename = "!!!" + ((Get-Item $textfile).Name)
-        $newsave = $dir + "\" + $filename
-        $content | Out-File $newsave
-        Remove-Item $textfile
-    }
+
     else {
         $content | Out-File $textfile
     }
 
 
+}
+
+function Set-Exlamationmarks {
+    param (
+        [array]$files
+    )
+    $files = $files | select -Unique
+    foreach ($textfile in $files) {
+        $textfile = $textfile.Replace("xcs","pgmx")
+        $dir = (Get-Item $textfile).Directory.FullName 
+        $filename = "!!!" + ((Get-Item $textfile).Name)
+        $newsave = $dir + "\" + $filename
+        $content | Out-File $newsave
+        Remove-Item $textfile  
+    }
 }
 
 function Correct-M200 {

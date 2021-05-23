@@ -212,12 +212,28 @@ Correct-M200
 function convert-xcs-to-pgmx {
     Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
     # Konvertieren in tmp pgmx
+
+    Write-Host "Konvertieren in tmp pgmx" -ForegroundColor Red
+    Write-Host "inFiles:" -ForegroundColor Red
+    $inFiles
+    Write-Host "tmfiles:" -ForegroundColor Red
+    $tmpFiles
     & $XConverter -ow -s -report -m 0 -i $inFiles -t $Tooling -o $tmpFiles | Out-Default
 
     # Bearbeitungen optimieren
+    Write-Host "Bearbeitungen optimieren" -ForegroundColor Red
+    Write-Host "tmfiles:" -ForegroundColor Red
+    $tmpFiles
+    Write-Host "tmfiles2:" -ForegroundColor Red
+    $tmpFiles2
     & $XConverter -ow -s -m 2 -i $tmpFiles -t $Tooling -o $tmpFiles2 | Out-Default
 	
     # Sauger positionieren
+    Write-Host "Sauger positionieren" -ForegroundColor Red
+    Write-Host "tmfiles2:" -ForegroundColor Red
+    $tmpFiles2
+    Write-Host "outfiles:" -ForegroundColor Red
+    $outFiles
     & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
 
     # Loesche die temporaeren Dateien
@@ -245,26 +261,21 @@ foreach ($Prog in $input) {
 
     Write-Host "################" -ForegroundColor Red
     $Prog
+    Write-Host "###" -ForegroundColor Red
+    $Prog.CamPath
+
 
     $xcsPath = $Prog.CamPath
-    Write-Host "Try xcspath $count : $xcsPath" -ForegroundColor Green
     $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-    Write-Host "Try pgmxPath $count : $pgmxPath" -ForegroundColor Green
     $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-    Write-Host "Try tmpPath $count : $tmpPath" -ForegroundColor Green
     $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-    Write-Host "Try tmpPath2 $count : $tmpPath2" -ForegroundColor Green
 	
 		
     $count += 1
     $inFiles += $xcsPath
-    Write-Host "Try inFiles $count : $inFiles" -ForegroundColor Green
     $outFiles += $pgmxPath
-    Write-Host "Try outFiles $count : $outFiles" -ForegroundColor Green
     $tmpFiles += $tmpPath
-    Write-Host "Try tmpFiles $count : $tmpFiles" -ForegroundColor Green
     $tmpFiles2 += $tmpPath2
-    Write-Host "Try tmpFiles2 $count : $tmpFiles2" -ForegroundColor Green
 }
 
 convert-xcs-to-pgmx

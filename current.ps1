@@ -157,18 +157,16 @@ foreach ($Prog in $input) {
 
     } | Set-Content $Prog.CamPath
 
-    # An- und Abfahrbewegung im bogen bohrend für Umfräsung
-
-    # Diese Funktion ermöglicht das Einfügen von Zeilen vor einem definierten Keyword!
-
-
     # Approach- und RetractStrategie ersetzen
-    $approachretractcontent = Get-Content $Prog.CamPath
-    foreach ($command in $approachretractcontent) {
-        $command.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)")
-        $command.Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
-    }
-    $approachretractcontent | Out-File $Prog.CamPath
+    (Get-Content $Prog.CamPath) | Foreach-Object {
+
+        # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+        $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+        Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+
+    } | Set-Content $Prog.CamPath
+
+
 
     # An- und Abfahrbewegung fliegend bohrend für Nut
     $insertnut = @()

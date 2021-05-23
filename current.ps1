@@ -90,7 +90,7 @@ function Set-Exlamationmarks {
         $filename = "!!!" + ((Get-Item $textfile).Name)
         $newsave = $dir + "\" + $filename
         $content | Out-File $newsave
-        Remove-Item $textfile  
+        # Remove-Item $textfile  
     }
 }
 

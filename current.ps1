@@ -168,7 +168,7 @@ foreach ($Prog in $input) {
         $command.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)")
         $command.Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
     }
-    Set-Content -Path $Prog.CamPath -Value $approachretractcontent
+    $approachretractcontent | Out-File $Prog.CamPath
 
     # An- und Abfahrbewegung fliegend bohrend für Nut
     $insertnut = @()

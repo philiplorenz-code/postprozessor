@@ -72,9 +72,9 @@ function Add-StringBefore {
         $counter++
     }
 
-    else {
-        $content | Out-File $textfile
-    }
+
+    $content | Out-File $textfile
+
 
 
 }

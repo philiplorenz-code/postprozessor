@@ -100,7 +100,7 @@ function Correct-M200 {
     $content = Get-Content $file2
     foreach ($line in $content) {
         if ($line -like "*CreateRawWorkpiece*"){
-            $stringarray = $string.split(",")
+            $stringarray = $line.split(",")
             $newarray = @()
             $newarray += $stringarray[0]
             $newarray += ","
@@ -119,7 +119,7 @@ function Correct-M200 {
 
         }
         if ($line -like "*SetWorkpieceSetupPosition*"){
-            $stringarray = $string.split(",")
+            $stringarray = $line.split(",")
             $newarray = @()
             $newarray += $stringarray[0]
             $newarray += ","

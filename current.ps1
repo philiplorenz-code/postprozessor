@@ -212,6 +212,9 @@ function convert-xcs-to-pgmx {
     & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
 
     # Loesche die temporaeren Dateien
+    Write-Host "Remove tmpFiles : $tmpFiles" -ForegroundColor Green
+    $gci = (gci $workingdir).Name
+    Write-Host " Dateien vor Löschversuch: $gci" -ForegroundColor Green
     Remove-Item $tmpFiles  
 	
     # Loesche die temporaeren Dateien
@@ -232,16 +235,24 @@ foreach ($Prog in $input) {
     }
 
     $xcsPath = $Prog.CamPath
+    Write-Host "Try xcspath $count : $xcsPath" -ForegroundColor Green
     $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+    Write-Host "Try pgmxPath $count : $pgmxPath" -ForegroundColor Green
     $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+    Write-Host "Try tmpPath $count : $tmpPath" -ForegroundColor Green
     $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+    Write-Host "Try tmpPath2 $count : $tmpPath2" -ForegroundColor Green
 	
 		
     $count += 1
     $inFiles += $xcsPath
+    Write-Host "Try inFiles $count : $inFiles" -ForegroundColor Green
     $outFiles += $pgmxPath
+    Write-Host "Try outFiles $count : $outFiles" -ForegroundColor Green
     $tmpFiles += $tmpPath
+    Write-Host "Try tmpFiles $count : $tmpFiles" -ForegroundColor Green
     $tmpFiles2 += $tmpPath2
+    Write-Host "Try tmpFiles2 $count : $tmpFiles2" -ForegroundColor Green
 }
 
 convert-xcs-to-pgmx

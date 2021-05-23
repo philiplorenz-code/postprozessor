@@ -243,6 +243,9 @@ foreach ($Prog in $input) {
         $outFiles = ""
     }
 
+    Write-Host "################" -ForegroundColor Red
+    $Prog
+
     $xcsPath = $Prog.CamPath
     Write-Host "Try xcspath $count : $xcsPath" -ForegroundColor Green
     $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'

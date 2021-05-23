@@ -19,5 +19,5 @@
 - Werkzeugselektion bei m/x200
 - Unterscheidung der Funktionen nach Button
 - Icon und Name von GUI
-- GUI im Vordergrund
+- GUI im Vordergrund #
 - explorer öffnen mit ii "PFAD"

@@ -83,14 +83,14 @@ function Set-Exlamationmarks {
     param (
         [array]$files
     )
-    $files = $files | select -Unique
+    $files = $files | Select-Object -Unique
     foreach ($textfile in $files) {
         $textfile = $textfile.Replace("xcs","pgmx")
         $dir = (Get-Item $textfile).Directory.FullName 
         $filename = "!!!" + ((Get-Item $textfile).Name)
         $newsave = $dir + "\" + $filename
         $content | Out-File $newsave
-        # Remove-Item $textfile  
+        Remove-Item $textfile  
     }
 }
 

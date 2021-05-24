@@ -16,18 +16,16 @@ Param(
 $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
 $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
-
+# Global Vars
 $count = 0
 $inFiles = @()
 $tmpFiles = @()
 $tmpFiles2 = @()
 $outFiles = @()
-
-# Hier werden die FilePaths reingepackt, welche um die 3 ! erweitert werden sollen
 $exclamtionmarks = @()
-
 $workingdir = (get-item ($input.CamPath[0])).Directory
 
+# Functions
 function Add-StringBefore {
     param (
         [array]$insert,
@@ -78,7 +76,6 @@ function Add-StringBefore {
 
 
 }
-
 function Set-Exlamationmarks {
     param (
         [array]$files
@@ -93,7 +90,6 @@ function Set-Exlamationmarks {
         Remove-Item $textfile  
     }
 }
-
 function Correct-M200 {
     $file2 = (Get-ChildItem $workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
@@ -160,63 +156,62 @@ function Correct-M200 {
     $content | Out-File $file2
 
 }
-
-foreach ($Prog in $input) {
-    (Get-Content $Prog.CamPath) | Foreach-Object {
-
-        # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-        $_.Replace("SlantedBladeCut", "Saegeschnitt_").
-        Replace("Routing_", "Fraesen_").
-        Replace("VerticalDrilling", "Vertikale Bohrung").
-        Replace("HorizontalDrilling", "Horizontale Bohrung").
-        Replace("PYTHA_INIT_", "Blindes Makro_").
-        Replace("PYTHA_PARK_", "Wegfahrschritt_")
-
-    } | Set-Content $Prog.CamPath
-
-    # Approach- und RetractStrategie ersetzen
-    (Get-Content $Prog.CamPath) | Foreach-Object {
-
-        # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-        $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
-        Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
-
-    } | Set-Content $Prog.CamPath
-
-
-
-    # An- und Abfahrbewegung fliegend bohrend für Nut
-    $insertnut = @()
-    $insertnut += 'SetApproachStrategy(true, false, 1.5);'
-    $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
-    $keywordnut = "CreateSlot"
-    $textfile = $Prog.CamPath
-    Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
-
-    # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
-    $inserttasche = @()
-    $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
-    $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
-    $keywordtasche = "CreateContourPocket"
-    $textfile = $Prog.CamPath
-    Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
+function First-Replace {
+    foreach ($Prog in $input) {
+        (Get-Content $Prog.CamPath) | Foreach-Object {
     
-		
-    # Vorritzen, an- und abfahren mit dem Sägeblatt
-    $insertblatt = @()
-    $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
-    $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
-    $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
-    $keywordblatt = "CreateBladeCut"
-    $textfile = $Prog.CamPath
-    Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
-
-
+            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+            $_.Replace("SlantedBladeCut", "Saegeschnitt_").
+            Replace("Routing_", "Fraesen_").
+            Replace("VerticalDrilling", "Vertikale Bohrung").
+            Replace("HorizontalDrilling", "Horizontale Bohrung").
+            Replace("PYTHA_INIT_", "Blindes Makro_").
+            Replace("PYTHA_PARK_", "Wegfahrschritt_")
+    
+        } | Set-Content $Prog.CamPath
+    
+        # Approach- und RetractStrategie ersetzen
+        (Get-Content $Prog.CamPath) | Foreach-Object {
+    
+            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+            $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+            Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+    
+        } | Set-Content $Prog.CamPath
+    
+    
+    
+        # An- und Abfahrbewegung fliegend bohrend für Nut
+        $insertnut = @()
+        $insertnut += 'SetApproachStrategy(true, false, 1.5);'
+        $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
+        $keywordnut = "CreateSlot"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
+    
+        # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
+        $inserttasche = @()
+        $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
+        $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
+        $keywordtasche = "CreateContourPocket"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
+        
+            
+        # Vorritzen, an- und abfahren mit dem Sägeblatt
+        $insertblatt = @()
+        $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
+        $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
+        $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
+        $keywordblatt = "CreateBladeCut"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
+    
+    
+    }
+    
+    
 }
-
-Correct-M200
-
-
 function convert-xcs-to-pgmx {
     Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
     # Konvertieren in tmp pgmx
@@ -253,41 +248,49 @@ function convert-xcs-to-pgmx {
     # Loesche die temporaeren Dateien
     Remove-Item $tmpFiles2
 }
-
-foreach ($Prog in $input) {
-    if ($count -ge 200) { 
-        # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-
-        convert-xcs-to-pgmx
-
-        $count = 0
-        $inFiles = ""
-        $tmpFiles = ""
-        $tmpFiles2 = ""
-        $outFiles = ""
+function Prepare-Files {
+    foreach ($Prog in $input) {
+        if ($count -ge 200) { 
+            # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+    
+            convert-xcs-to-pgmx
+    
+            $count = 0
+            $inFiles = ""
+            $tmpFiles = ""
+            $tmpFiles2 = ""
+            $outFiles = ""
+        }
+    
+        Write-Host "################" -ForegroundColor Red
+        $Prog
+        Write-Host "###" -ForegroundColor Red
+        $Prog.CamPath
+    
+    
+        $xcsPath = $Prog.CamPath
+        $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+        $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+        $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+        
+            
+        $count += 1
+        $inFiles += $xcsPath
+        $outFiles += $pgmxPath
+        $tmpFiles += $tmpPath
+        $tmpFiles2 += $tmpPath2
     }
-
-    Write-Host "################" -ForegroundColor Red
-    $Prog
-    Write-Host "###" -ForegroundColor Red
-    $Prog.CamPath
-
-
-    $xcsPath = $Prog.CamPath
-    $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-    $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-    $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-	
-		
-    $count += 1
-    $inFiles += $xcsPath
-    $outFiles += $pgmxPath
-    $tmpFiles += $tmpPath
-    $tmpFiles2 += $tmpPath2
+    
+}
+function Open-Dir {
+    Invoke-Item $workingdir 
 }
 
+# Main
+First-Replace
+Correct-M200
+Prepare-Files
 convert-xcs-to-pgmx
-
 Set-Exlamationmarks -file $exclamtionmarks
-
+Open-Dir
 Start-Sleep 1

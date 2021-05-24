@@ -1,23 +1,7 @@
-# current wird immer ausgeführt
-- 33 und 34 funktionieren in 42-64 ##
-- Zeile 10-12 drin lassen ##
-- Wenn einmal vorhanden gehts, wenn mehrmal unzuverlässig: ##
-    Zeile 69-146; : CreateSlot ##
-    wenn mehrmals: nur das erste ersetzte ##
-
-
-#m200
-- andere Werkzeugdatei: def.tlgx (zeiel17 -> 154,157,160)
--> Differenzierung in Button
-#x200
-- def1.tlgx (zeile 18 -> anderer Pfad)
-- Wenn CreateBladeCut irgendwann im File, dann File-NAme mit 3 ! am Anfang ##
-
-
+- GUI im Vordergrund #
 
 - zusammenführen!!
 - Werkzeugselektion bei m/x200
 - Unterscheidung der Funktionen nach Button
 - Icon und Name von GUI
-- GUI im Vordergrund #
 - explorer öffnen mit ii "PFAD"

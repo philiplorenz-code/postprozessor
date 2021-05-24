@@ -120,6 +120,10 @@ function Correct-M200 {
             $dbg = $content[$count]
             Write-Host "Diese ContentLine wird geändert: $dbg" -ForegroundColor Green
             Write-Host "In: $output" -ForegroundColor Green
+
+            $lastarray = $output.Split("(")
+            $output = $lastarray[0] + "(" + ($lastarray[1] -replace '^.','0')
+
             $content[$count] = $output
 
         }
@@ -143,13 +147,17 @@ function Correct-M200 {
             $dbg = $content[$count]
             Write-Host "Diese ContentLine wird geändert: $dbg" -ForegroundColor Green
             Write-Host "In: $output" -ForegroundColor Green
+
+            $lastarray = $output.Split("(")
+            $output = $lastarray[0] + "(" + ($lastarray[1] -replace '^.','0')
+
             $content[$count] = $output
 
         }
         $count++
     }
 
-    $output | Out-File $file2
+    $content | Out-File $file2
 
 }
 

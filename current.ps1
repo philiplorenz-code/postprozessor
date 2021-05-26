@@ -321,6 +321,10 @@ foreach ($Prog in $input) {
 Correct-M200Updated
 
 }
+
+
+<#
+
 foreach ($Prog in $input) {
     if ($count -ge 200) { 
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
@@ -385,6 +389,59 @@ $tmpFiles2
 Write-Host "outfiles:" -ForegroundColor Red
 $outFiles
 & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
+
+
+#>
+
+########
+
+function convert-xcs-to-pgmx {
+    Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
+    # Konvertieren in tmp pgmx
+    & $XConverter -ow -s -report -m 0 -i $inFiles -t $Tooling -o $tmpFiles | Out-Default
+
+    # Bearbeitungen optimieren
+    & $XConverter -ow -s -m 2 -i $tmpFiles -t $Tooling -o $tmpFiles2 | Out-Default
+	
+    # Sauger positionieren
+    & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
+
+    # Loesche die temporaeren Dateien
+    Remove-Item $tmpFiles  
+	
+    # Loesche die temporaeren Dateien
+    Remove-Item $tmpFiles2
+}
+
+foreach ($Prog in $input) {
+    if ($count -ge 200) { 
+        # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+
+        convert-xcs-to-pgmx
+
+        $count = 0
+        $inFiles = ""
+        $tmpFiles = ""
+        $tmpFiles2 = ""
+        $outFiles = ""
+    }
+
+    $xcsPath = $Prog.CamPath
+    $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+    $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+    $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+	
+		
+    $count += 1
+    $inFiles += $xcsPath
+    $outFiles += $pgmxPath
+    $tmpFiles += $tmpPath
+    $tmpFiles2 += $tmpPath2
+}
+
+convert-xcs-to-pgmx
+
+########
 
 
 Set-Exlamationmarks -file $exclamtionmarks

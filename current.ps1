@@ -18,12 +18,12 @@ $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
 # Global Vars
 $count = 0
-$global:inFiles = @()
-$global:tmpFiles = @()
-$global:tmpFiles2 = @()
-$global:outFiles = @()
-$global:exclamtionmarks = @()
-$global:workingdir = (get-item ($input.CamPath[0])).Directory
+$inFiles = @()
+$tmpFiles = @()
+$tmpFiles2 = @()
+$outFiles = @()
+$exclamtionmarks = @()
+$workingdir = (get-item ($input.CamPath[0])).Directory
 
 # Functions
 function Add-StringBefore {
@@ -231,35 +231,7 @@ function First-Replace {
 }
 
 function Convert-Prep {
-    foreach ($Prog in $input) {
 
-    
-
-        if ($count -ge 200) { 
-            # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-    
-            convert-xcs-to-pgmx
-    
-            $count = 0
-            $inFiles = ""
-            $tmpFiles = ""
-            $tmpFiles2 = ""
-            $outFiles = ""
-        }
-        
-    
-        $xcsPath = $Prog.CamPath
-        $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-        $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-        $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-        
-            
-        $count += 1
-        $inFiles += $xcsPath
-        $outFiles += $pgmxPath
-        $tmpFiles += $tmpPath
-        $tmpFiles2 += $tmpPath2
-    }
 }
 function convert-xcs-to-pgmx {
     Write-Host "!!!!! TMPFiles2: $tmpFiles2" -ForegroundColor Green
@@ -298,7 +270,35 @@ foreach ($Prog in $input) {
 Correct-M200Updated
 
 }
-Convert-Prep
+
+
+foreach ($Prog in $input) {
+    if ($count -ge 200) { 
+        # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+
+        convert-xcs-to-pgmx
+
+        $count = 0
+        $inFiles = ""
+        $tmpFiles = ""
+        $tmpFiles2 = ""
+        $outFiles = ""
+    }
+    
+
+    $xcsPath = $Prog.CamPath
+    $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+    $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+    $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+    
+        
+    $count += 1
+    $inFiles += $xcsPath
+    $outFiles += $pgmxPath
+    $tmpFiles += $tmpPath
+    $tmpFiles2 += $tmpPath2
+}
+
 convert-xcs-to-pgmx
 Set-Exlamationmarks -file $exclamtionmarks
 Open-Dir

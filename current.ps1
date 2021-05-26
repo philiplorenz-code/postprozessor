@@ -229,6 +229,8 @@ function First-Replace {
     Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
  
 }
+
+<#
 function convert-xcs-to-pgmx {
     Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
     # Konvertieren in tmp pgmx
@@ -265,6 +267,8 @@ function convert-xcs-to-pgmx {
     # Loesche die temporaeren Dateien
     Remove-Item $tmpFiles2
 }
+
+#>
 function Prepare-Files {
 
     if ($count -ge 200) { 

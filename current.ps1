@@ -18,12 +18,12 @@ $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
 # Global Vars
 $count = 0
-$inFiles = @()
-$tmpFiles = @()
-$tmpFiles2 = @()
-$outFiles = @()
-$exclamtionmarks = @()
-$workingdir = (get-item ($input.CamPath[0])).Directory
+$global:inFiles = @()
+$global:tmpFiles = @()
+$global:tmpFiles2 = @()
+$global:outFiles = @()
+$global:exclamtionmarks = @()
+$global:workingdir = (get-item ($input.CamPath[0])).Directory
 
 # Functions
 function Add-StringBefore {

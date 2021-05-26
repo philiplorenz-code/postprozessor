@@ -307,12 +307,6 @@ function Open-Dir {
     Invoke-Item $workingdir 
 }
 
-function Clean-Up {
-    param (
-        OptionalParameters
-    )
-    
-}
 
 # Main
 foreach ($Prog in $input) {

@@ -1,3 +1,14 @@
+# ArrayList statt Array!!!:
+Function ListRunningServices
+{
+    Get-Service | ?{$_.Status -eq "Running"} | sort Name | select Name |
+     ForEach-Object {$services.add($_)}
+}
+
+$services = New-Object collections.arraylist
+ListRunningServices
+$services
+
 [CmdletBinding()]
 Param(
     $SystemPath, # the value can be set in PYTHA Interface Setup
@@ -18,11 +29,11 @@ $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
 # Global Vars
 $count = 0
-$inFiles = @()
-$tmpFiles = @()
-$tmpFiles2 = @()
-$outFiles = @()
-$exclamtionmarks = @()
+$inFiles = New-Object collections.arraylist
+$tmpFiles = New-Object collections.arraylist
+$tmpFiles2 = New-Object collections.arraylist
+$outFiles = New-Object collections.arraylist
+$exclamtionmarks = New-Object collections.arraylist
 $workingdir = (get-item ($input.CamPath[0])).Directory
 
 # Functions
@@ -47,7 +58,7 @@ function Add-StringBefore {
 
         if ($string -like "*$keyword*") {
             if ($bc){
-                $exclamtionmarks += $textfile
+                $exclamtionmarks.Add($textfile)
             }
 
             $keywordcomplete = $string
@@ -346,10 +357,10 @@ function Run-M200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFi
         
             
         $count += 1
-        $inFiles += $xcsPath
-        $outFiles += $pgmxPath
-        $tmpFiles += $tmpPath
-        $tmpFiles2 += $tmpPath2
+        $inFiles.Add($xcsPath)
+        $outFiles.Add(($pgmxPath)
+        $tmpFiles.Add($tmpPath)
+        $tmpFiles2.Add($tmpPath2)
     }
     convert-xcs-to-pgmx
     Open-Dir
@@ -389,10 +400,10 @@ function Run-X200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFi
         
             
         $count += 1
-        $inFiles += $xcsPath
-        $outFiles += $pgmxPath
-        $tmpFiles += $tmpPath
-        $tmpFiles2 += $tmpPath2
+        $inFiles.Add($xcsPath)
+        $outFiles.Add($pgmxPath)
+        $tmpFiles.Add($tmpPath)
+        $tmpFiles2.Add($tmpPath2)
     }
     
     convert-xcs-to-pgmx
@@ -423,8 +434,8 @@ $Window = [Windows.Markup.XamlReader]::Parse($Xaml)
 
 $xml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name $_.Name -Value $Window.FindName($_.Name) }
 
-$m200button.Add_Click({Run-M200($input,$inFiles,$outFiles,$tmpFiles,$tmpFiles2) $this $_})
-$x200button.Add_Click({Run-X200($input,$inFiles,$outFiles,$tmpFiles,$tmpFiles2) $this $_})
+$m200button.Add_Click({Run-M200 $this $_})
+$x200button.Add_Click({Run-X200 $this $_})
 $errorbox.text = $error
 
 $State = [PSCustomObject]@{}

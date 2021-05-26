@@ -319,7 +319,7 @@ $Xaml = @"
 
 
 #Write your code here
-function Run-M200(){
+function Run-M200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFiles, [array]$tmpFiles2){
     $State.tabIndex = 1
     foreach ($Prog in $input) {
         First-Replace
@@ -363,12 +363,11 @@ function Run-M200(){
 
 }
 
-function Run-X200(){
+function Run-X200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFiles, [array]$tmpFiles2){
     $State.tabIndex = 1
     foreach ($Prog in $input) {
         First-Replace
     }
-
     foreach ($Prog in $input) {
         if ($count -ge 200) { 
             # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
@@ -424,9 +423,8 @@ $Window = [Windows.Markup.XamlReader]::Parse($Xaml)
 
 $xml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name $_.Name -Value $Window.FindName($_.Name) }
 
-
-$m200button.Add_Click({Run-M200 $this $_})
-$x200button.Add_Click({Run-X200 $this $_})
+$m200button.Add_Click({Run-M200($input,$inFiles,$outFiles,$tmpFiles,$tmpFiles2) $this $_})
+$x200button.Add_Click({Run-X200($input,$inFiles,$outFiles,$tmpFiles,$tmpFiles2) $this $_})
 $errorbox.text = $error
 
 $State = [PSCustomObject]@{}

@@ -169,7 +169,7 @@ function Correct-M200Updated {
         }
         if ($line -like "*SetWorkpieceSetupPosition*"){
             $newstring = ($content[$count]) -replace ".{26}$"
-            $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000);"
+            $newstring = $newstring + "0.0000, 0.0000, 0.0, 0.0);"
             $content[$count] = $newstring
         }
         $count++
@@ -230,45 +230,6 @@ function First-Replace {
  
 }
 
-<#
-function convert-xcs-to-pgmx {
-    Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
-    # Konvertieren in tmp pgmx
-
-    Write-Host "Konvertieren in tmp pgmx" -ForegroundColor Red
-    Write-Host "inFiles:" -ForegroundColor Red
-    $inFiles
-    Write-Host "tmfiles:" -ForegroundColor Red
-    $tmpFiles
-    & $XConverter -ow -s -report -m 0 -i $inFiles -t $Tooling -o $tmpFiles | Out-Default
-
-    # Bearbeitungen optimieren
-    Write-Host "Bearbeitungen optimieren" -ForegroundColor Red
-    Write-Host "tmfiles:" -ForegroundColor Red
-    $tmpFiles
-    Write-Host "tmfiles2:" -ForegroundColor Red
-    $tmpFiles2
-    & $XConverter -ow -s -m 2 -i $tmpFiles -t $Tooling -o $tmpFiles2 | Out-Default
-	
-    # Sauger positionieren
-    Write-Host "Sauger positionieren" -ForegroundColor Red
-    Write-Host "tmfiles2:" -ForegroundColor Red
-    $tmpFiles2
-    Write-Host "outfiles:" -ForegroundColor Red
-    $outFiles
-    & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
-
-    # Loesche die temporaeren Dateien
-    Write-Host "Remove tmpFiles : $tmpFiles" -ForegroundColor Green
-    $gci = (gci $workingdir).Name
-    Write-Host " Dateien vor Löschversuch: $gci" -ForegroundColor Green
-    Remove-Item $tmpFiles  
-	
-    # Loesche die temporaeren Dateien
-    Remove-Item $tmpFiles2
-}
-
-#>
 function Prepare-Files {
 
     if ($count -ge 200) { 
@@ -320,79 +281,6 @@ Correct-M200Updated
 
 }
 
-
-<#
-
-foreach ($Prog in $input) {
-    if ($count -ge 200) { 
-        # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-
-        #convert-xcs-to-pgmx
-
-        $count = 0
-        $inFiles = ""
-        $tmpFiles = ""
-        $tmpFiles2 = ""
-        $outFiles = ""
-    }
-
-    Write-Host "################" -ForegroundColor Red
-    $Prog
-    Write-Host "###" -ForegroundColor Red
-    $Prog.CamPath
-
-
-    $xcsPath = $Prog.CamPath
-    Write-Host "$xcsPath" -ForegroundColor Green
-    $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-    Write-Host "$pgmxPath" -ForegroundColor Green
-    $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-    Write-Host "$tmpPath" -ForegroundColor Green
-    $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-    Write-Host "$tmpPath2" -ForegroundColor Green
-
-        
-    $count += 1
-    $inFiles += $xcsPath
-    $outFiles += $pgmxPath
-    $tmpFiles += $tmpPath
-    $tmpFiles2 += $tmpPath2
-}
-
-
-
-
-Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
-# Konvertieren in tmp pgmx
-
-Write-Host "Konvertieren in tmp pgmx" -ForegroundColor Red
-Write-Host "inFiles:" -ForegroundColor Red
-$inFiles
-Write-Host "tmfiles:" -ForegroundColor Red
-$tmpFiles
-& $XConverter -ow -s -report -m 0 -i $inFiles -t $Tooling -o $tmpFiles | Out-Default
-
-# Bearbeitungen optimieren
-Write-Host "Bearbeitungen optimieren" -ForegroundColor Red
-Write-Host "tmfiles:" -ForegroundColor Red
-$tmpFiles
-Write-Host "tmfiles2:" -ForegroundColor Red
-$tmpFiles2
-& $XConverter -ow -s -m 2 -i $tmpFiles -t $Tooling -o $tmpFiles2 | Out-Default
-
-# Sauger positionieren
-Write-Host "Sauger positionieren" -ForegroundColor Red
-Write-Host "tmfiles2:" -ForegroundColor Red
-$tmpFiles2
-Write-Host "outfiles:" -ForegroundColor Red
-$outFiles
-& $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
-
-
-#>
-
-########
-
 function convert-xcs-to-pgmx {
     Write-Host "!!!!! TMPFiles2: $tmpFiles2" -ForegroundColor Green
     Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
@@ -412,15 +300,15 @@ function convert-xcs-to-pgmx {
     & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
 
     # Loesche die temporaeren Dateien
-    #Remove-Item $tmpFiles  
+    Remove-Item $tmpFiles  
 	
     # Loesche die temporaeren Dateien
-    #Remove-Item $tmpFiles2
+    Remove-Item $tmpFiles2
 }
 
 foreach ($Prog in $input) {
 
-    <#
+    
 
     if ($count -ge 200) { 
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
@@ -433,7 +321,7 @@ foreach ($Prog in $input) {
         $tmpFiles2 = ""
         $outFiles = ""
     }
-    #>
+    
 
     $xcsPath = $Prog.CamPath
     $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
@@ -450,7 +338,7 @@ foreach ($Prog in $input) {
 
 convert-xcs-to-pgmx
 
-########
+
 
 
 Set-Exlamationmarks -file $exclamtionmarks

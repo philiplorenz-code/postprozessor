@@ -156,6 +156,28 @@ function Correct-M200 {
     $content | Out-File $file2
 
 }
+function Correct-M200Updated {
+    $file2 = (Get-ChildItem $workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
+    Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
+    $count = 0
+    $content = Get-Content $file2
+    foreach ($line in $content) {
+        if ($line -like "*CreateRawWorkpiece*"){
+            $newstring = ($content[$count]) -replace ".{43}$"
+            $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
+            $content[$count] = $newstring
+        }
+        if ($line -like "*SetWorkpieceSetupPosition*"){
+            $newstring = ($content[$count]) -replace ".{26}$"
+            $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000);"
+            $content[$count] = $newstring
+        }
+        $count++
+    }
+
+    $content | Out-File $file2
+
+}
 function First-Replace {
     (Get-Content $Prog.CamPath) | Foreach-Object {
 
@@ -288,17 +310,11 @@ function Open-Dir {
 # Main
 foreach ($Prog in $input) {
     First-Replace
+    Prepare-Files
 }
-Correct-M200
-Prepare-Files
+Correct-M200Updated
 convert-xcs-to-pgmx
 Set-Exlamationmarks -file $exclamtionmarks
 
 Open-Dir
 Start-Sleep 1
-
-
-
-#Pseudo
-If CreateRawWorkpiece: ersetze die letzten 43 Zeichen durch "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
-If SetWorkpieceSetupPosition: Ersetze die letzten 26 Zeichen in Zeile 4 durch "0.0000,0.0000,0.0000,0.0000);"

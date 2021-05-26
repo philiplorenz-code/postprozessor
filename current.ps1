@@ -307,6 +307,13 @@ function Open-Dir {
     Invoke-Item $workingdir 
 }
 
+function Clean-Up {
+    param (
+        OptionalParameters
+    )
+    
+}
+
 # Main
 foreach ($Prog in $input) {
     First-Replace
@@ -318,7 +325,7 @@ foreach ($Prog in $input) {
     if ($count -ge 200) { 
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
 
-        convert-xcs-to-pgmx
+        #convert-xcs-to-pgmx
 
         $count = 0
         $inFiles = ""

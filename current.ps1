@@ -264,10 +264,14 @@ function Prepare-Files {
     
     
         $xcsPath = $Prog.CamPath
+        Write-Host "$xcsPath" -ForegroundColor Green
         $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+        Write-Host "$pgmxPath" -ForegroundColor Green
         $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+        Write-Host "$tmpPath" -ForegroundColor Green
         $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-        
+        Write-Host "$tmpPath2" -ForegroundColor Green
+
             
         $count += 1
         $inFiles += $xcsPath
@@ -285,10 +289,16 @@ function Open-Dir {
 foreach ($Prog in $input) {
     First-Replace
 }
-    Correct-M200
-    Prepare-Files
-    convert-xcs-to-pgmx
-    Set-Exlamationmarks -file $exclamtionmarks
+Correct-M200
+Prepare-Files
+convert-xcs-to-pgmx
+Set-Exlamationmarks -file $exclamtionmarks
 
 Open-Dir
 Start-Sleep 1
+
+
+
+#Pseudo
+If CreateRawWorkpiece: ersetze die letzten 43 Zeichen durch "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
+If SetWorkpieceSetupPosition: Ersetze die letzten 26 Zeichen in Zeile 4 durch "0.0000,0.0000,0.0000,0.0000);"

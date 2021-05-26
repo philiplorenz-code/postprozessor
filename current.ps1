@@ -394,6 +394,7 @@ $outFiles
 ########
 
 function convert-xcs-to-pgmx {
+    Write-Host "!!!!! TMPFiles2: $tmpFiles2" -ForegroundColor Green
     Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
     # Konvertieren in tmp pgmx
     Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
@@ -418,6 +419,9 @@ function convert-xcs-to-pgmx {
 }
 
 foreach ($Prog in $input) {
+
+    <#
+
     if ($count -ge 200) { 
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
 
@@ -429,6 +433,7 @@ foreach ($Prog in $input) {
         $tmpFiles2 = ""
         $outFiles = ""
     }
+    #>
 
     $xcsPath = $Prog.CamPath
     $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'

@@ -267,9 +267,11 @@ function Open-Dir {
 foreach ($Prog in $input) {
     First-Replace
 
-Correct-M200Updated
+
 
 }
+
+Correct-M200Updated # OBACH EVTL IN DIE SCHLEIFE OBEN ZURÜCK!!
 
 
 foreach ($Prog in $input) {

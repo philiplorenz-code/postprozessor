@@ -392,11 +392,17 @@ $outFiles
 function convert-xcs-to-pgmx {
     Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
     # Konvertieren in tmp pgmx
+    Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
+    Write-Host "INFILES: $infiles" -ForegroundColor Green
     & $XConverter -ow -s -report -m 0 -i $inFiles -t $Tooling -o $tmpFiles | Out-Default
-
+    $g = (gci -Path $workingdir).Name
+    Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
     # Bearbeitungen optimieren
+    Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
     & $XConverter -ow -s -m 2 -i $tmpFiles -t $Tooling -o $tmpFiles2 | Out-Default
-	
+    $g = (gci -Path $workingdir).Name
+    Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
+
     # Sauger positionieren
     & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
 

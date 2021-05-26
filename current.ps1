@@ -157,60 +157,55 @@ function Correct-M200 {
 
 }
 function First-Replace {
-    foreach ($Prog in $input) {
-        (Get-Content $Prog.CamPath) | Foreach-Object {
+    (Get-Content $Prog.CamPath) | Foreach-Object {
+
+        # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+        $_.Replace("SlantedBladeCut", "Saegeschnitt_").
+        Replace("Routing_", "Fraesen_").
+        Replace("VerticalDrilling", "Vertikale Bohrung").
+        Replace("HorizontalDrilling", "Horizontale Bohrung").
+        Replace("PYTHA_INIT_", "Blindes Makro_").
+        Replace("PYTHA_PARK_", "Wegfahrschritt_")
+
+    } | Set-Content $Prog.CamPath
+
+    # Approach- und RetractStrategie ersetzen
+    (Get-Content $Prog.CamPath) | Foreach-Object {
+
+        # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+        $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+        Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+
+    } | Set-Content $Prog.CamPath
+
+
+
+    # An- und Abfahrbewegung fliegend bohrend für Nut
+    $insertnut = @()
+    $insertnut += 'SetApproachStrategy(true, false, 1.5);'
+    $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
+    $keywordnut = "CreateSlot"
+    $textfile = $Prog.CamPath
+    Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
+
+    # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
+    $inserttasche = @()
+    $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
+    $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
+    $keywordtasche = "CreateContourPocket"
+    $textfile = $Prog.CamPath
+    Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
     
-            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-            $_.Replace("SlantedBladeCut", "Saegeschnitt_").
-            Replace("Routing_", "Fraesen_").
-            Replace("VerticalDrilling", "Vertikale Bohrung").
-            Replace("HorizontalDrilling", "Horizontale Bohrung").
-            Replace("PYTHA_INIT_", "Blindes Makro_").
-            Replace("PYTHA_PARK_", "Wegfahrschritt_")
-    
-        } | Set-Content $Prog.CamPath
-    
-        # Approach- und RetractStrategie ersetzen
-        (Get-Content $Prog.CamPath) | Foreach-Object {
-    
-            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-            $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
-            Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
-    
-        } | Set-Content $Prog.CamPath
-    
-    
-    
-        # An- und Abfahrbewegung fliegend bohrend für Nut
-        $insertnut = @()
-        $insertnut += 'SetApproachStrategy(true, false, 1.5);'
-        $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
-        $keywordnut = "CreateSlot"
-        $textfile = $Prog.CamPath
-        Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
-    
-        # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
-        $inserttasche = @()
-        $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
-        $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
-        $keywordtasche = "CreateContourPocket"
-        $textfile = $Prog.CamPath
-        Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
         
-            
-        # Vorritzen, an- und abfahren mit dem Sägeblatt
-        $insertblatt = @()
-        $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
-        $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
-        $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
-        $keywordblatt = "CreateBladeCut"
-        $textfile = $Prog.CamPath
-        Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
-    
-    
-    }
-    
-    
+    # Vorritzen, an- und abfahren mit dem Sägeblatt
+    $insertblatt = @()
+    $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
+    $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
+    $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
+    $keywordblatt = "CreateBladeCut"
+    $textfile = $Prog.CamPath
+    Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
+ 
 }
 function convert-xcs-to-pgmx {
     Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
@@ -287,10 +282,13 @@ function Open-Dir {
 }
 
 # Main
-First-Replace
-Correct-M200
-Prepare-Files
-convert-xcs-to-pgmx
-Set-Exlamationmarks -file $exclamtionmarks
+foreach ($Prog in $input) {
+    First-Replace
+}
+    Correct-M200
+    Prepare-Files
+    convert-xcs-to-pgmx
+    Set-Exlamationmarks -file $exclamtionmarks
+
 Open-Dir
 Start-Sleep 1

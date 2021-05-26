@@ -1,4 +1,5 @@
 # ArrayList statt Array!!!:
+<#
 Function ListRunningServices
 {
     Get-Service | ?{$_.Status -eq "Running"} | sort Name | select Name |
@@ -8,7 +9,7 @@ Function ListRunningServices
 $services = New-Object collections.arraylist
 ListRunningServices
 $services
-
+#>
 [CmdletBinding()]
 Param(
     $SystemPath, # the value can be set in PYTHA Interface Setup
@@ -358,7 +359,7 @@ function Run-M200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFi
             
         $count += 1
         $inFiles.Add($xcsPath)
-        $outFiles.Add(($pgmxPath)
+        $outFiles.Add($pgmxPath)
         $tmpFiles.Add($tmpPath)
         $tmpFiles2.Add($tmpPath2)
     }

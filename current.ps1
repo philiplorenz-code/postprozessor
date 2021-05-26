@@ -266,41 +266,41 @@ function convert-xcs-to-pgmx {
     Remove-Item $tmpFiles2
 }
 function Prepare-Files {
-    foreach ($Prog in $input) {
-        if ($count -ge 200) { 
-            # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-    
-            convert-xcs-to-pgmx
-    
-            $count = 0
-            $inFiles = ""
-            $tmpFiles = ""
-            $tmpFiles2 = ""
-            $outFiles = ""
-        }
-    
-        Write-Host "################" -ForegroundColor Red
-        $Prog
-        Write-Host "###" -ForegroundColor Red
-        $Prog.CamPath
-    
-    
-        $xcsPath = $Prog.CamPath
-        Write-Host "$xcsPath" -ForegroundColor Green
-        $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-        Write-Host "$pgmxPath" -ForegroundColor Green
-        $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-        Write-Host "$tmpPath" -ForegroundColor Green
-        $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-        Write-Host "$tmpPath2" -ForegroundColor Green
 
-            
-        $count += 1
-        $inFiles += $xcsPath
-        $outFiles += $pgmxPath
-        $tmpFiles += $tmpPath
-        $tmpFiles2 += $tmpPath2
+    if ($count -ge 200) { 
+        # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+
+        convert-xcs-to-pgmx
+
+        $count = 0
+        $inFiles = ""
+        $tmpFiles = ""
+        $tmpFiles2 = ""
+        $outFiles = ""
     }
+
+    Write-Host "################" -ForegroundColor Red
+    $Prog
+    Write-Host "###" -ForegroundColor Red
+    $Prog.CamPath
+
+
+    $xcsPath = $Prog.CamPath
+    Write-Host "$xcsPath" -ForegroundColor Green
+    $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+    Write-Host "$pgmxPath" -ForegroundColor Green
+    $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+    Write-Host "$tmpPath" -ForegroundColor Green
+    $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+    Write-Host "$tmpPath2" -ForegroundColor Green
+
+        
+    $count += 1
+    $inFiles += $xcsPath
+    $outFiles += $pgmxPath
+    $tmpFiles += $tmpPath
+    $tmpFiles2 += $tmpPath2
+
     
 }
 function Open-Dir {
@@ -310,11 +310,15 @@ function Open-Dir {
 # Main
 foreach ($Prog in $input) {
     First-Replace
+
+Correct-M200Updated
+
+}
+foreach ($Prog in $input) {
     Prepare-Files
 }
-Correct-M200Updated
+
 convert-xcs-to-pgmx
 Set-Exlamationmarks -file $exclamtionmarks
-
 Open-Dir
 Start-Sleep 1

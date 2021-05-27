@@ -1,15 +1,3 @@
-# ArrayList statt Array!!!:
-<#
-Function ListRunningServices
-{
-    Get-Service | ?{$_.Status -eq "Running"} | sort Name | select Name |
-     ForEach-Object {$services.add($_)}
-}
-
-$services = New-Object collections.arraylist
-ListRunningServices
-$services
-#>
 [CmdletBinding()]
 Param(
     $SystemPath, # the value can be set in PYTHA Interface Setup

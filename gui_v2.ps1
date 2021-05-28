@@ -32,7 +32,7 @@ $Global:tmpFiles = @()
 $Global:tmpFiles2 = @()
 $Global:outFiles = @()
 $Global:exclamtionmarks = @()
-$Global:workingdir = (get-item ($input.CamPath[0])).Directory
+$Global:workingdir = ((get-item ($input.CamPath[0]) | select Directory).Directory).FullName
 $Global:input_new = $input
 
 # Functions

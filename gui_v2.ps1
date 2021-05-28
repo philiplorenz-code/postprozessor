@@ -27,11 +27,11 @@ $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
 # Global Vars
 $count = 0
-$Global:inFiles = New-Object collections.arraylist
-$Global:tmpFiles = New-Object collections.arraylist
-$Global:tmpFiles2 = New-Object collections.arraylist
-$Global:outFiles = New-Object collections.arraylist
-$Global:exclamtionmarks = New-Object collections.arraylist
+$Global:inFiles = @()
+$Global:tmpFiles = @()
+$Global:tmpFiles2 = @()
+$Global:outFiles = @()
+$Global:exclamtionmarks = @()
 $Global:workingdir = (get-item ($input.CamPath[0])).Directory
 $Global:input_new = $input
 
@@ -357,10 +357,10 @@ function Run-M200([array]$Global:input,[array]$Global:inFiles, [array]$Global:ou
         
             
         $count += 1
-        $Global:inFiles.Add($xcsPath)
-        $Global:outFiles.Add($pgmxPath)
-        $Global:tmpFiles.Add($tmpPath)
-        $Global:tmpFiles2.Add($tmpPath2)
+        $Global:inFiles += $xcsPath
+        $Global:outFiles += $pgmxPath
+        $Global:tmpFiles += $tmpPath
+        $Global:tmpFiles2 += $tmpPath2
     }
     convert-xcs-to-pgmx
     Open-Dir
@@ -400,10 +400,10 @@ function Run-X200([array]$Global:input,[array]$Global:inFiles, [array]$Global:ou
         
             
         $count += 1
-        $Global:inFiles.Add($xcsPath)
-        $Global:outFiles.Add($pgmxPath)
-        $Global:tmpFiles.Add($tmpPath)
-        $Global:tmpFiles2.Add($tmpPath2)
+        $Global:inFiles += $xcsPath
+        $Global:outFiles += $pgmxPath
+        $Global:tmpFiles += $tmpPath
+        $Global:tmpFiles2 += $tmpPath2
     }
     
     convert-xcs-to-pgmx

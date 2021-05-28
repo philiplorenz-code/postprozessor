@@ -435,7 +435,7 @@ function Run-X200(){
     
     convert-xcs-to-pgmx
 
-    Set-Exlamationmarks -files $Global:exclamtionmarks
+    # Set-Exlamationmarks -files $Global:exclamtionmarks
     Open-Dir
     Start-Sleep 1
     if ($error.count -gt 0){

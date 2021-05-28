@@ -18,6 +18,9 @@ write-host $Program
 write-host "Input:"
 write-host $Input
 
+$str = $input | Out-String
+Write-Host $str -ForegroundColor Green
+
 #Alternative Pfade für Maestro 64 Bit
 $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
 $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'

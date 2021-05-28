@@ -21,8 +21,6 @@ $Global:input_new = $input
 $str = $Global:input_new | Out-String
 Write-Host $str -ForegroundColor Green
 
-write-host "CamPath:" -Foregroundcolor Cyan
-$Global:input_new.CamPath
 
 write-host "CamPathType:" -Foregroundcolor Cyan
 ($Global:input_new.CamPath).gettype()
@@ -50,16 +48,14 @@ $Global:tmpFiles = @()
 $Global:tmpFiles2 = @()
 $Global:outFiles = @()
 $Global:exclamtionmarks = @()
-$Global:workdirtemp = $input.CamPath[0]
-write-host $input.CamPath
-($input.CamPath).gettype()
-($Global:workdirtemp).Gettype()
-$Global:workdirtemp
-$b = $Global:workdirtemp.substring($Global:workdirtemp.length - 2, 2)
-if ($b -eq "\C"){
-    $Global:workdirtemp = $Global:workdirtemp -replace ".{2}$"
-} 
 
+# WorkDir
+if (($Global:input_new.CamPath) -is [String]){
+	$Global:workdirtemp = ($Global:input_new.CamPath)
+}
+else {
+	$Global:workdirtemp = $input.CamPath[0]
+}
 $Global:workingdir = ((get-item $Global:workdirtemp | select Directory).Directory).FullName
 write-host "Global:workingdir" -Foregroundcolor Green
 

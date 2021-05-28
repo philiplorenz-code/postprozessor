@@ -33,6 +33,8 @@ $Global:tmpFiles2 = @()
 $Global:outFiles = @()
 $Global:exclamtionmarks = @()
 $Global:workdirtemp = $input.CamPath[0]
+write-host $input.CamPath
+($input.CamPath).gettype()
 ($Global:workdirtemp).Gettype()
 $Global:workdirtemp
 $b = $Global:workdirtemp.substring($Global:workdirtemp.length - 2, 2)

@@ -17,8 +17,8 @@ write-host $SystemProfile
 write-host $Program
 write-host "Input:"
 write-host $Input
-
-$str = $input | Out-String
+$Global:input_new = $input
+$str = $Global:input_new | Out-String
 Write-Host $str -ForegroundColor Green
 
 #Alternative Pfade für Maestro 64 Bit
@@ -33,7 +33,7 @@ $Global:tmpFiles2 = New-Object collections.arraylist
 $Global:outFiles = New-Object collections.arraylist
 $Global:exclamtionmarks = New-Object collections.arraylist
 $Global:workingdir = (get-item ($input.CamPath[0])).Directory
-$Global:input = $input
+$Global:input_new = $input
 
 # Functions
 function Add-StringBefore {
@@ -189,7 +189,7 @@ function Correct-M200Updated {
 
 }
 function First-Replace {
-    foreach ($Prog in $Global:input) {
+    foreach ($Prog in $Global:input_new) {
 
         (Get-Content $Prog.CamPath) | Foreach-Object {
 
@@ -336,7 +336,7 @@ function Run-M200([array]$Global:input,[array]$Global:inFiles, [array]$Global:ou
     $State.tabIndex = 1
     First-Replace
     Correct-M200Updated
-    foreach ($Prog in $Global:input) {
+    foreach ($Prog in $Global:input_new) {
         if ($count -ge 200) { 
             # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
     
@@ -379,7 +379,7 @@ function Run-X200([array]$Global:input,[array]$Global:inFiles, [array]$Global:ou
 
     First-Replace
 
-    foreach ($Prog in $Global:input) {
+    foreach ($Prog in $Global:input_new) {
         if ($count -ge 200) { 
             # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
     

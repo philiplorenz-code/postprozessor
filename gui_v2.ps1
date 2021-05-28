@@ -32,12 +32,13 @@ $Global:tmpFiles = @()
 $Global:tmpFiles2 = @()
 $Global:outFiles = @()
 $Global:exclamtionmarks = @()
-$Global:workingdir = ((get-item ($input.CamPath[0]) | select Directory).Directory).FullName
-$b = $Global:workingdir.substring($Global:workingdir.length - 2, 2)
+$Global:workdirtemp = $input.CamPath[0]
+$b = $Global:workdirtemp.substring($Global:workdirtemp.length - 2, 2)
 if ($b -eq "\C"){
-    $Global:workingdir = $Global:workingdir -replace ".{2}$"
+    $Global:workdirtemp = $Global:workdirtemp -replace ".{2}$"
 } 
 
+Global:workingdir = ((get-item $Global:workdirtemp | select Directory).Directory).FullName
 write-host "Global:workingdir" -Foregroundcolor Green
 
 $Global:input_new = $input

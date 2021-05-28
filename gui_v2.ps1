@@ -1,15 +1,3 @@
-# ArrayList statt Array!!!:
-<#
-Function ListRunningServices
-{
-    Get-Service | ?{$_.Status -eq "Running"} | sort Name | select Name |
-     ForEach-Object {$services.add($_)}
-}
-
-$services = New-Object collections.arraylist
-ListRunningServices
-$services
-#>
 [CmdletBinding()]
 Param(
     $SystemPath, # the value can be set in PYTHA Interface Setup
@@ -23,6 +11,12 @@ Param(
 #$XConverter = 'C:\Program Files (x86)\SCM Group_1\Maestro\XConverter.exe'
 #$Tooling = 'C:\Program Files (x86)\SCM Group_1\Maestro\Tlgx\def.tlgx'
 
+write-host $SystemPath
+write-host $SystemCommand
+write-host $SystemProfile
+write-host $Program
+write-host "Input:"
+write-host $Input
 
 #Alternative Pfade für Maestro 64 Bit
 $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'

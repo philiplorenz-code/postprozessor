@@ -15,11 +15,29 @@ write-host $SystemPath
 write-host $SystemCommand
 write-host $SystemProfile
 write-host $Program
-write-host "Input:"
-write-host $Input
+
+write-host "Input:" -Foregroundcolor Cyan
 $Global:input_new = $input
 $str = $Global:input_new | Out-String
 Write-Host $str -ForegroundColor Green
+
+write-host "CamPath:" -Foregroundcolor Cyan
+$Global:input_new.CamPath
+
+write-host "CamPathType:" -Foregroundcolor Cyan
+($Global:input_new.CamPath).gettype()
+
+write-host "CamPath[0]:" -Foregroundcolor Cyan
+($Global:input_new.CamPath)[0]
+
+write-host "CamPath[0] Type:" -Foregroundcolor Cyan
+(($Global:input_new.CamPath)[0]).GetType()
+
+write-host "CamPath[1]:" -Foregroundcolor Cyan
+($Global:input_new.CamPath)[1]
+
+write-host "CamPath[1] Type:" -Foregroundcolor Cyan
+(($Global:input_new.CamPath)[1]).GetType()
 
 #Alternative Pfade für Maestro 64 Bit
 $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'

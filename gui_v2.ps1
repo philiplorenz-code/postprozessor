@@ -250,6 +250,7 @@ function convert-xcs-to-pgmx {
     Write-Output 'GS Ravensburg CAM-Export' $Global:inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $Global:outFiles
     # Konvertieren in tmp pgmx
     Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
+    Write-Host $Global:inFiles -ForegroundColor RED
     Write-Host "INFILES: $Global:inFiles" -ForegroundColor Green
     & $XConverter -ow -s -report -m 0 -i $Global:inFiles -t $Tooling -o $Global:tmpFiles | Out-Default
     $g = (gci -Path $Global:workingdir).Name

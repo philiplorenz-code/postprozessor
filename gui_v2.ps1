@@ -100,7 +100,7 @@ function Set-Exlamationmarks {
         Remove-Item $textfile  
     }
 }
-function Correct-M200 {
+function Correct-{
     $file2 = (Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
@@ -333,7 +333,7 @@ $Xaml = @"
 
 
 #Write your code here
-function Run-M200([array]$Global:input,[array]$Global:inFiles, [array]$Global:outFiles, [array]$Global:tmpFiles, [array]$Global:tmpFiles2){
+function Run-M200(){
     $State.tabIndex = 1
     First-Replace
     Correct-M200Updated
@@ -375,7 +375,7 @@ function Run-M200([array]$Global:input,[array]$Global:inFiles, [array]$Global:ou
 
 }
 
-function Run-X200([array]$Global:input,[array]$Global:inFiles, [array]$Global:outFiles, [array]$Global:tmpFiles, [array]$Global:tmpFiles2){
+function Run-X200(){
     $State.tabIndex = 1
 
     First-Replace

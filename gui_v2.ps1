@@ -33,6 +33,7 @@ $Global:tmpFiles2 = @()
 $Global:outFiles = @()
 $Global:exclamtionmarks = @()
 $Global:workdirtemp = $input.CamPath[0]
+($Global:workdirtemp).Gettype()
 $b = $Global:workdirtemp.substring($Global:workdirtemp.length - 2, 2)
 if ($b -eq "\C"){
     $Global:workdirtemp = $Global:workdirtemp -replace ".{2}$"

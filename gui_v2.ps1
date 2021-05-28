@@ -57,7 +57,7 @@ function Add-StringBefore {
 
         if ($string -like "*$keyword*") {
             if ($bc){
-                $Global:exclamtionmarks.Add($textfile)
+                $Global:exclamtionmarks += $textfile
             }
 
             $keywordcomplete = $string

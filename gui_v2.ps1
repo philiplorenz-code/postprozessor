@@ -40,7 +40,7 @@ if ($b -eq "\C"){
     $Global:workdirtemp = $Global:workdirtemp -replace ".{2}$"
 } 
 
-Global:workingdir = ((get-item $Global:workdirtemp | select Directory).Directory).FullName
+$Global:workingdir = ((get-item $Global:workdirtemp | select Directory).Directory).FullName
 write-host "Global:workingdir" -Foregroundcolor Green
 
 $Global:input_new = $input

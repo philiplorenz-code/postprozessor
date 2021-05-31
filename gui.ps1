@@ -2,7 +2,7 @@
 Param(
     $SystemPath, # the value can be set in PYTHA Interface Setup
     $SystemCommand, # the value can be set in PYTHA Interface Setup
-    $SystemProfile, # the value can be set in PYTHA Interface Setup
+    $SystemProfile, # the valuå can be set in PYTHA Interface Setup
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Program
 )
 ############################################################################
@@ -11,19 +11,55 @@ Param(
 #$XConverter = 'C:\Program Files (x86)\SCM Group_1\Maestro\XConverter.exe'
 #$Tooling = 'C:\Program Files (x86)\SCM Group_1\Maestro\Tlgx\def.tlgx'
 
+write-host $SystemPath
+write-host $SystemCommand
+write-host $SystemProfile
+write-host $Program
+
+write-host "Input:" -Foregroundcolor Cyan
+$Global:input_new = $input
+$str = $Global:input_new | Out-String
+Write-Host $str -ForegroundColor Green
+
+
+write-host "CamPathType:" -Foregroundcolor Cyan
+($Global:input_new.CamPath).gettype()
+
+write-host "CamPath[0]:" -Foregroundcolor Cyan
+($Global:input_new.CamPath)[0]
+
+write-host "CamPath[0] Type:" -Foregroundcolor Cyan
+(($Global:input_new.CamPath)[0]).GetType()
+
+write-host "CamPath[1]:" -Foregroundcolor Cyan
+($Global:input_new.CamPath)[1]
+
+write-host "CamPath[1] Type:" -Foregroundcolor Cyan
+(($Global:input_new.CamPath)[1]).GetType()
 
 #Alternative Pfade für Maestro 64 Bit
 $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-$Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
+# $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
 # Global Vars
 $count = 0
-$inFiles = New-Object collections.arraylist
-$tmpFiles = New-Object collections.arraylist
-$tmpFiles2 = New-Object collections.arraylist
-$outFiles = New-Object collections.arraylist
-$exclamtionmarks = New-Object collections.arraylist
-$workingdir = (get-item ($input.CamPath[0])).Directory
+$Global:inFiles = @()
+$Global:tmpFiles = @()
+$Global:tmpFiles2 = @()
+$Global:outFiles = @()
+$Global:exclamtionmarks = @()
+
+# WorkDir
+if (($Global:input_new.CamPath) -is [String]){
+	$Global:workdirtemp = ($Global:input_new.CamPath)
+}
+else {
+	$Global:workdirtemp = $input.CamPath[0]
+}
+$Global:workingdir = ((get-item $Global:workdirtemp | select Directory).Directory).FullName
+write-host "Global:workingdir" -Foregroundcolor Green
+
+$Global:input_new = $input
 
 # Functions
 function Add-StringBefore {
@@ -47,7 +83,7 @@ function Add-StringBefore {
 
         if ($string -like "*$keyword*") {
             if ($bc){
-                $exclamtionmarks.Add($textfile)
+                $Global:exclamtionmarks += $textfile
             }
 
             $keywordcomplete = $string
@@ -90,8 +126,8 @@ function Set-Exlamationmarks {
         Remove-Item $textfile  
     }
 }
-function Correct-M200 {
-    $file2 = (Get-ChildItem $workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
+function Correct-{
+    $file2 = (Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
     $content = Get-Content $file2
@@ -157,9 +193,10 @@ function Correct-M200 {
 
 }
 function Correct-M200Updated {
-    $file2 = (Get-ChildItem $workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
+    $file2 = (Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
+write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
     $content = Get-Content $file2
     foreach ($line in $content) {
         if ($line -like "*CreateRawWorkpiece*"){
@@ -179,86 +216,90 @@ function Correct-M200Updated {
 
 }
 function First-Replace {
-    (Get-Content $Prog.CamPath) | Foreach-Object {
+    foreach ($Prog in $Global:input_new) {
 
-        # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-        $_.Replace("SlantedBladeCut", "Saegeschnitt_").
-        Replace("Routing_", "Fraesen_").
-        Replace("VerticalDrilling", "Vertikale Bohrung").
-        Replace("HorizontalDrilling", "Horizontale Bohrung").
-        Replace("PYTHA_INIT_", "Blindes Makro_").
-        Replace("PYTHA_PARK_", "Wegfahrschritt_")
+        (Get-Content $Prog.CamPath) | Foreach-Object {
 
-    } | Set-Content $Prog.CamPath
+            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+            $_.Replace("SlantedBladeCut", "Saegeschnitt_").
+            Replace("Routing_", "Fraesen_").
+            Replace("VerticalDrilling", "Vertikale Bohrung").
+            Replace("HorizontalDrilling", "Horizontale Bohrung").
+            Replace("PYTHA_INIT_", "Blindes Makro_").
+            Replace("PYTHA_PARK_", "Wegfahrschritt_")
 
-    # Approach- und RetractStrategie ersetzen
-    (Get-Content $Prog.CamPath) | Foreach-Object {
+        } | Set-Content $Prog.CamPath
 
-        # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-        $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
-        Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+        # Approach- und RetractStrategie ersetzen
+        (Get-Content $Prog.CamPath) | Foreach-Object {
 
-    } | Set-Content $Prog.CamPath
+            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+            $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+            Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+
+        } | Set-Content $Prog.CamPath
 
 
 
-    # An- und Abfahrbewegung fliegend bohrend für Nut
-    $insertnut = @()
-    $insertnut += 'SetApproachStrategy(true, false, 1.5);'
-    $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
-    $keywordnut = "CreateSlot"
-    $textfile = $Prog.CamPath
-    Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
+        # An- und Abfahrbewegung fliegend bohrend für Nut
+        $insertnut = @()
+        $insertnut += 'SetApproachStrategy(true, false, 1.5);'
+        $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
+        $keywordnut = "CreateSlot"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
 
-    # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
-    $inserttasche = @()
-    $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
-    $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
-    $keywordtasche = "CreateContourPocket"
-    $textfile = $Prog.CamPath
-    Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
-    
+        # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
+        $inserttasche = @()
+        $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
+        $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
+        $keywordtasche = "CreateContourPocket"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
         
-    # Vorritzen, an- und abfahren mit dem Sägeblatt
-    $insertblatt = @()
-    $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
-    $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
-    $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
-    $keywordblatt = "CreateBladeCut"
-    $textfile = $Prog.CamPath
-    Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
- 
+            
+        # Vorritzen, an- und abfahren mit dem Sägeblatt
+        $insertblatt = @()
+        $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
+        $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
+        $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
+        $keywordblatt = "CreateBladeCut"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
+
+    }
 }
 function Convert-Prep {
 
 }
 function convert-xcs-to-pgmx {
-    Write-Host "!!!!! TMPFiles2: $tmpFiles2" -ForegroundColor Green
-    Write-Output 'GS Ravensburg CAM-Export' $inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $outFiles
+    Write-Host "!!!!! TMPFiles2: $Global:tmpFiles2" -ForegroundColor Green
+    Write-Output 'GS Ravensburg CAM-Export' $Global:inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $Global:outFiles
     # Konvertieren in tmp pgmx
     Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
-    Write-Host "INFILES: $infiles" -ForegroundColor Green
-    & $XConverter -ow -s -report -m 0 -i $inFiles -t $Tooling -o $tmpFiles | Out-Default
-    $g = (gci -Path $workingdir).Name
+    Write-Host $Global:inFiles -ForegroundColor RED
+    Write-Host "INFILES: $Global:inFiles" -ForegroundColor Green
+    & $XConverter -ow -s -report -m 0 -i $Global:inFiles -t $global:Tooling -o $Global:tmpFiles | Out-Default
+    $g = (gci -Path $Global:workingdir).Name
     Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
     # Bearbeitungen optimieren
     Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
-    & $XConverter -ow -s -m 2 -i $tmpFiles -t $Tooling -o $tmpFiles2 | Out-Default
-    $g = (gci -Path $workingdir).Name
+    & $XConverter -ow -s -m 2 -i $Global:tmpFiles -t $global:Tooling -o $Global:tmpFiles2 | Out-Default
+    $g = (gci -Path $Global:workingdir).Name
     Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
 
     # Sauger positionieren
-    & $XConverter -ow -s -m 13 -i $tmpFiles2 -t $Tooling -o $outFiles | Out-Default
+    & $XConverter -ow -s -m 13 -i $Global:tmpFiles2 -t $global:Tooling -o $Global:outFiles | Out-Default
 
     # Loesche die temporaeren Dateien
-    Remove-Item $tmpFiles  
+    Remove-Item $Global:tmpFiles  
 	
     # Loesche die temporaeren Dateien
-    Remove-Item $tmpFiles2
+    Remove-Item $Global:tmpFiles2
 }
 
 function Open-Dir {
-    Invoke-Item $workingdir 
+    Invoke-Item $Global:workingdir 
 }
 
 
@@ -281,26 +322,26 @@ $Xaml = @"
 
 <Button Content="5-Achs M200" HorizontalAlignment="Left" VerticalAlignment="Top" Width="210" Margin="33,260,0,0" Height="64" BorderBrush="#9b9b9b" Foreground="#000000" OpacityMask="#4a90e2" BorderThickness="5,5,5,5" FontFamily="Yu Gothic UI Bold *" FontSize="22" FontWeight="DemiBold" Background="#ffffff" Name="m200button"/>
 <Button Content="Nesting X200" HorizontalAlignment="Left" VerticalAlignment="Top" Width="210" Margin="33,80,0,0" Name="x200button" Height="64" Background="#ffffff" BorderBrush="#9b9b9b" Foreground="#000000" OpacityMask="#4a90e2" BorderThickness="5,5,5,5" FontFamily="Yu Gothic UI Bold *" FontSize="22" FontWeight="DemiBold"/>
-<Image HorizontalAlignment="Left" Height="171" VerticalAlignment="Top" Width="313" Margin="395,20,0,0" Source="C:\DevStuff\Projekt\Theo\x200.png" Name="x200"/>
-<Image HorizontalAlignment="Left" Height="171" VerticalAlignment="Top" Width="313" Margin="395,210,0,0" Source="C:\DevStuff\Projekt\Theo\m200.png" Name="m200"/>
-<Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon1" Source="C:\DevStuff\Projekt\Theo\icon.png"/>
+<Image HorizontalAlignment="Left" Height="171" VerticalAlignment="Top" Width="313" Margin="395,20,0,0" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\x200.png" Name="x200"/>
+<Image HorizontalAlignment="Left" Height="171" VerticalAlignment="Top" Width="313" Margin="395,210,0,0" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\m200.png" Name="m200"/>
+<Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon1" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\icon.png"/>
 <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Gewerbliche Schule Ravensburg" Margin="387,414,0,0" Name="IconText1" FontFamily="Yu Gothic UI Bold *" FontSize="021" FontWeight="DemiBold"/>
 </Grid>
 </TabItem>
      <TabItem Visibility="Collapsed" Header="Fortschritt"><Grid Background="#9b9b9b" Margin="1,1,-1,-1" Name="wait">
-<Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon2" Source="C:\DevStuff\Projekt\Theo\icon.png"/>
+<Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon2" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\icon.png"/>
 <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Gewerbliche Schule Ravensburg" Margin="387,414,0,0" Name="IconText2" FontFamily="Yu Gothic UI Bold *" FontSize="021" FontWeight="DemiBold"/>
 
 
 
 
 
-<Image HorizontalAlignment="Left" Height="255" VerticalAlignment="Top" Width="571" Margin="185,97,0,0" Source="C:\DevStuff\Projekt\Theo\warten.png"/>
-<Image HorizontalAlignment="Left" Height="245" VerticalAlignment="Top" Width="123" Margin="41,102,0,0" Source="C:\DevStuff\Projekt\Theo\sanduhr.png"/>
+<Image HorizontalAlignment="Left" Height="255" VerticalAlignment="Top" Width="571" Margin="185,97,0,0" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\warten.png"/>
+<Image HorizontalAlignment="Left" Height="245" VerticalAlignment="Top" Width="123" Margin="41,102,0,0" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\sanduhr.png"/>
 </Grid>
 </TabItem>
      <TabItem Visibility="Collapsed" Header="Ende"><Grid Background="#FFE5E5E5">
-<Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon3" Source="C:\DevStuff\Projekt\Theo\icon.png"/>
+<Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon3" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\icon.png"/>
 <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Gewerbliche Schule Ravensburg" Margin="387,414,0,0" Name="IconText3" FontFamily="Yu Gothic UI Bold *" FontSize="021" FontWeight="DemiBold"/>
 
 
@@ -319,23 +360,27 @@ $Xaml = @"
 
 
 #Write your code here
-function Run-M200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFiles, [array]$tmpFiles2){
+function Run-M200(){
+    $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
     $State.tabIndex = 1
-    foreach ($Prog in $input) {
-        First-Replace
+    First-Replace
+    try {
+        Correct-M200Updated
     }
-    Correct-M200Updated
-    foreach ($Prog in $input) {
+    catch{
+
+    }
+    foreach ($Prog in $Global:input_new) {
         if ($count -ge 200) { 
             # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
     
             convert-xcs-to-pgmx
     
             $count = 0
-            $inFiles = ""
-            $tmpFiles = ""
-            $tmpFiles2 = ""
-            $outFiles = ""
+            $Global:inFiles = ""
+            $Global:tmpFiles = ""
+            $Global:tmpFiles2 = ""
+            $Global:outFiles = ""
         }
         
     
@@ -346,10 +391,10 @@ function Run-M200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFi
         
             
         $count += 1
-        $inFiles.Add($xcsPath)
-        $outFiles.Add($pgmxPath)
-        $tmpFiles.Add($tmpPath)
-        $tmpFiles2.Add($tmpPath2)
+        $Global:inFiles += $xcsPath
+        $Global:outFiles += $pgmxPath
+        $Global:tmpFiles += $tmpPath
+        $Global:tmpFiles2 += $tmpPath2
     }
     convert-xcs-to-pgmx
     Open-Dir
@@ -363,22 +408,23 @@ function Run-M200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFi
 
 }
 
-function Run-X200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFiles, [array]$tmpFiles2){
+function Run-X200(){
+    $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
     $State.tabIndex = 1
-    foreach ($Prog in $input) {
-        First-Replace
-    }
-    foreach ($Prog in $input) {
+
+    First-Replace
+
+    foreach ($Prog in $Global:input_new) {
         if ($count -ge 200) { 
             # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
     
             convert-xcs-to-pgmx
     
             $count = 0
-            $inFiles = ""
-            $tmpFiles = ""
-            $tmpFiles2 = ""
-            $outFiles = ""
+            $Global:inFiles = ""
+            $Global:tmpFiles = ""
+            $Global:tmpFiles2 = ""
+            $Global:outFiles = ""
         }
         
     
@@ -389,15 +435,15 @@ function Run-X200([array]$input,[array]$inFiles, [array]$outfiles, [array]$tmpFi
         
             
         $count += 1
-        $inFiles.Add($xcsPath)
-        $outFiles.Add($pgmxPath)
-        $tmpFiles.Add($tmpPath)
-        $tmpFiles2.Add($tmpPath2)
+        $Global:inFiles += $xcsPath
+        $Global:outFiles += $pgmxPath
+        $Global:tmpFiles += $tmpPath
+        $Global:tmpFiles2 += $tmpPath2
     }
     
     convert-xcs-to-pgmx
 
-    Set-Exlamationmarks
+    # Set-Exlamationmarks -files $Global:exclamtionmarks
     Open-Dir
     Start-Sleep 1
     if ($error.count -gt 0){
@@ -544,4 +590,4 @@ $Window.activate()
 ######################################################
 ######################################################
 
-
+ 

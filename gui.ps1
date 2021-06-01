@@ -364,12 +364,10 @@ function Run-M200(){
     $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
     $State.tabIndex = 1
     First-Replace
-    try {
-        Correct-M200Updated
-    }
-    catch{
 
-    }
+        Correct-M200Updated
+
+
     foreach ($Prog in $Global:input_new) {
         if ($count -ge 200) { 
             # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		

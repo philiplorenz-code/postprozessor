@@ -193,8 +193,8 @@ function Correct-{
 
 }
 function Correct-M200Updated {
-    $file2 = (Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName
-    Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
+    foreach ($file2 in ((Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName)) {
+        Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
 write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
     $content = Get-Content $file2
@@ -213,6 +213,8 @@ write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
     }
 
     $content | Out-File $file2
+
+    }
 
 }
 function First-Replace {

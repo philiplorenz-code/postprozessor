@@ -366,8 +366,11 @@ function Run-M200(){
     $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
     $State.tabIndex = 1
     First-Replace
-
-        Correct-M200Updated
+	try {
+	  Correct-M200Updated
+	}
+        catch {}
+	
 
 
     foreach ($Prog in $Global:input_new) {

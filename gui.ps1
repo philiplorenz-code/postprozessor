@@ -404,6 +404,10 @@ $Global:exclamtionmarks = @()
             $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
             $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
         
+            Write-Output "xcspath"
+            Write-Host "xcspath"          
+            Write-Output $xcsPath
+            Write-Host $xcsPath
             
             $count += 1
             $Global:inFiles += $xcsPath
@@ -457,13 +461,16 @@ $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
                 $Global:tmpFiles2 = ""
                 $Global:outFiles = ""
             }
-        
+            Write-Output "Prog.CamPath "
+            Write-Host "Prog.CamPath "   
+            $Prog.CamPath | Out-String
     
             $xcsPath = $Prog.CamPath
             $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
             $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
             $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
         
+
             
             $count += 1
             $Global:inFiles += $xcsPath

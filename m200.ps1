@@ -30,7 +30,7 @@ function Add-StringBefore {
 
         if ($string -like "*$keyword*") {
             if ($bc){
-                $Global:exclamtionmarks += $textfile
+                #$Global:exclamtionmarks += $textfile
             }
 
             $keywordcomplete = $string
@@ -74,7 +74,7 @@ function Set-Exlamationmarks {
     }
 }
 function Correct-M200Updated {
-    foreach ($file2 in ((Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName)) {
+    foreach ($file2 in ((Get-ChildItem $State.WorkingDir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName)) {
         Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
 write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
@@ -100,11 +100,11 @@ write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
 }
 
 function Open-Dir {
-    Invoke-Item $Global:workingdir 
+    Invoke-Item $State.WorkingDir
 }
 
 function First-Replace {
-    foreach ($Prog in $Global:input_new) {
+    foreach ($Prog in $State.input) {
 
         (Get-Content $Prog.CamPath) | Foreach-Object {
 
@@ -158,30 +158,30 @@ function First-Replace {
     }
 }
 function convert-xcs-to-pgmx {
-    $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-    Write-Host "!!!!! TMPFiles2: $Global:tmpFiles2" -ForegroundColor Green
-    Write-Output 'GS Ravensburg CAM-Export' $Global:inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $Global:outFiles
+    $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
+    Write-Host "!!!!! TMPFiles2: $State.tmpFiles2" -ForegroundColor Green
+    Write-Output 'GS Ravensburg CAM-Export' $State.Infiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $State.outFiles
     # Konvertieren in tmp pgmx
     Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
-    Write-Host $Global:inFiles -ForegroundColor RED
-    Write-Host "INFILES: $Global:inFiles" -ForegroundColor Green
-    & $XConverter -ow -s -report -m 0 -i $Global:inFiles -t $global:Tooling -o $Global:tmpFiles | Out-Default
-    $g = (gci -Path $Global:workingdir).Name
+    Write-Host $State.Infiles -ForegroundColor RED
+    Write-Host "INFILES: $State.Infiles" -ForegroundColor Green
+    & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -t $State.Tooling -o $State.tmpFiles | Out-Default
+    $g = (gci -Path $State.WorkingDir).Name
     Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
     # Bearbeitungen optimieren
     Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
-    & $XConverter -ow -s -m 2 -i $Global:tmpFiles -t $global:Tooling -o $Global:tmpFiles2 | Out-Default
-    $g = (gci -Path $Global:workingdir).Name
+    & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -t $State.Tooling -o $State.tmpFiles2 | Out-Default
+    $g = (gci -Path $State.WorkingDir).Name
     Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
 
     # Sauger positionieren
-    & $XConverter -ow -s -m 13 -i $Global:tmpFiles2 -t $global:Tooling -o $Global:outFiles | Out-Default
+    & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -t $State.Tooling -o $State.outFiles | Out-Default
 
     # Loesche die temporaeren Dateien
-    Remove-Item $Global:tmpFiles  
+    Remove-Item $State.tmpFiles  
 	
     # Loesche die temporaeren Dateien
-    Remove-Item $Global:tmpFiles2
+    Remove-Item $State.tmpFiles2
 }
 
 
@@ -495,6 +495,5 @@ $State.WorkingDirTemp
 
 
 $Window.ShowDialog()
-
 
 

@@ -28,6 +28,11 @@ write-host $Program
 
 write-host "Input:" -Foregroundcolor Cyan
 $Global:input_new = $input
+Write-Output "inputnew "
+Write-Host "inputnew " 
+Write-Warning "inputnew "   
+5 / 0
+$Global:input_new | Out-String
 $str = $Global:input_new | Out-String
 Write-Host $str -ForegroundColor Green
 
@@ -447,9 +452,9 @@ $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
 
         "Now First-Replace" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
         First-Replace
-        Write-Output "Prog.CamPath "
-        Write-Host "Prog.CamPath " 
-        Write-Warning "Prog.CamPath "   
+        Write-Output "inputnew "
+        Write-Host "inputnew " 
+        Write-Warning "inputnew "   
         5 / 0
         $Global:input_new | Out-String
         foreach ($Prog in $Global:input_new) {

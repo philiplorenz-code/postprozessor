@@ -452,10 +452,10 @@ function Run-M200(){
     
         
         $count += 1
-        $State.Infiles += $xcsPath
-        $State.outFiles += $pgmxPath
-        $State.tmpFiles += $tmpPath
-        $State.tmpFiles2 += $tmpPath2
+        [Array]$State.Infiles += $xcsPath
+        [Array]$State.outFiles += $pgmxPath
+        [Array]$State.tmpFiles += $tmpPath
+        [Array]$State.tmpFiles2 += $tmpPath2
     }
         convert-xcs-to-pgmx
         Open-Dir
@@ -495,5 +495,4 @@ $State.WorkingDirTemp
 
 
 $Window.ShowDialog()
-
 

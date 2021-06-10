@@ -48,7 +48,7 @@ write-host "CamPath[1] Type:" -Foregroundcolor Cyan
 (($Global:input_new.CamPath)[1]).GetType()
 
 #Alternative Pfade für Maestro 64 Bit
-$XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
+
 # $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
 
@@ -433,6 +433,7 @@ $Global:tmpFiles = @()
 $Global:tmpFiles2 = @()
 $Global:outFiles = @()
 $Global:exclamtionmarks = @()
+$XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
 
         New-Item -ItemType File -Path "C:\Users\theo_\Desktop\log.log"
         $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'

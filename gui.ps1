@@ -51,13 +51,6 @@ write-host "CamPath[1] Type:" -Foregroundcolor Cyan
 $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
 # $Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
 
-# Global Vars
-$count = 0
-$Global:inFiles = @()
-$Global:tmpFiles = @()
-$Global:tmpFiles2 = @()
-$Global:outFiles = @()
-$Global:exclamtionmarks = @()
 
 # WorkDir
 if (($Global:input_new.CamPath) -is [String]){
@@ -374,6 +367,13 @@ $Xaml = @"
 #Write your code here
 function Run-M200(){
     Async{
+    # Global Vars
+$count = 0
+$Global:inFiles = @()
+$Global:tmpFiles = @()
+$Global:tmpFiles2 = @()
+$Global:outFiles = @()
+$Global:exclamtionmarks = @()
         $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
         $State.tabIndex = 1
         First-Replace
@@ -426,6 +426,13 @@ function Run-M200(){
 
 function Run-X200(){
     Async {
+    # Global Vars
+$count = 0
+$Global:inFiles = @()
+$Global:tmpFiles = @()
+$Global:tmpFiles2 = @()
+$Global:outFiles = @()
+$Global:exclamtionmarks = @()
 
         New-Item -ItemType File -Path "C:\Users\theo_\Desktop\log.log"
         $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'

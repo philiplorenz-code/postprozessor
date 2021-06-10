@@ -427,8 +427,8 @@ function Run-M200(){
 function Run-X200(){
     Async {
 
-    
-        $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
+    try {
+            $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
         $State.tabIndex = 1
 
         First-Replace
@@ -471,6 +471,11 @@ function Run-X200(){
         else {
             exit
         }
+
+    }
+    catch {
+        $errorbox = $error
+    }
     }
 }
 

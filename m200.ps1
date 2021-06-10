@@ -469,9 +469,7 @@ function Run-M200(){
 	stop-transcript
     }
 
-    if ($State.tabIndex -eq 1){
-        exit
-    }
+    exit
     
 }
 

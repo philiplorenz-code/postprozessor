@@ -468,7 +468,9 @@ function Run-M200(){
         }
 	stop-transcript
     }
-    Start-Sleep -Seconds 10
+    while(!((Get-Runspace)[0]).IsCompleted) {
+        
+    }
     if ($State.tabIndex = 1){
         exit
     }

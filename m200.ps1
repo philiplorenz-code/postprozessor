@@ -411,6 +411,8 @@ function convert-xcs-to-pgmx {
 
 function Run-M200(){
     Async{
+    start-transcript "C:\Users\theo_\Desktop\transcript.txt"
+    start-transaction
     # Global Vars
     $count = 0
 
@@ -456,7 +458,7 @@ function Run-M200(){
         else {
             exit
         }
-
+	stop-transcript
     }
     
 }

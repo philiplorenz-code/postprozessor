@@ -474,7 +474,7 @@ function Run-X200(){
 
     }
     catch {
-        $errorbox = $error
+        $errorbox.AppendText($error)
     }
     }
 }

@@ -468,8 +468,11 @@ function Run-M200(){
         }
 	stop-transcript
     }
-
-    exit
+    Start-Sleep -Seconds 10
+    if ($State.tabIndex = 1){
+        exit
+    }
+    
     
 }
 

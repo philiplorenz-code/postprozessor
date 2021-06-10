@@ -278,6 +278,7 @@ function Convert-Prep {
 
 }
 function convert-xcs-to-pgmx {
+    $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
     Write-Host "!!!!! TMPFiles2: $Global:tmpFiles2" -ForegroundColor Green
     Write-Output 'GS Ravensburg CAM-Export' $Global:inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $Global:outFiles
     # Konvertieren in tmp pgmx
@@ -426,6 +427,7 @@ $Global:exclamtionmarks = @()
 
 function Run-X200(){
     Async {
+    start-transcript "C:\Users\theo_\Desktop\transcript.txt"
     # Global Vars
 $count = 0
 $Global:inFiles = @()

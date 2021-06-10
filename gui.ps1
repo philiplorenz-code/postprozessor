@@ -462,19 +462,21 @@ function Run-X200(){
             $Global:tmpFiles2 += $tmpPath2
         }
                 "Now Convert" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
+		$error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
 
         convert-xcs-to-pgmx
-
+$error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
         # Set-Exlamationmarks -files $Global:exclamtionmarks
         Open-Dir
         Start-Sleep 1
+	$error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
         if ($error.count -gt 0){
             $State.tabIndex = 2
         }
         else {
             exit
         }
-
+$error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
     
 
     }

@@ -427,17 +427,17 @@ function Run-M200(){
 function Run-X200(){
     Async {
 
-        New-Item -ItemType File -Path "C:\log.log"
+        New-Item -ItemType File -Path "C:\Users\theo_\Desktop\log.log"
         $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
         $State.tabIndex = 1
 
-        "Now First-Replace" | Out-File "C:\log.log" -Append
+        "Now First-Replace" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
         First-Replace
 
         foreach ($Prog in $Global:input_new) {
             if ($count -ge 200) { 
                 # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-            "Now Convert in if" | Out-File "C:\log.log" -Append
+            "Now Convert in if" | Out-File "C:\Users\theo_\Desktop\log.log"" -Append
 
                 convert-xcs-to-pgmx
     
@@ -461,7 +461,7 @@ function Run-X200(){
             $Global:tmpFiles += $tmpPath
             $Global:tmpFiles2 += $tmpPath2
         }
-                "Now Convert" | Out-File "C:\log.log" -Append
+                "Now Convert" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
 
         convert-xcs-to-pgmx
 

@@ -447,7 +447,11 @@ $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
 
         "Now First-Replace" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
         First-Replace
-
+        Write-Output "Prog.CamPath "
+        Write-Host "Prog.CamPath " 
+        Write-Warning "Prog.CamPath "   
+        5 / 0
+        $Global:input_new | Out-String
         foreach ($Prog in $Global:input_new) {
             if ($count -ge 200) { 
                 # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		

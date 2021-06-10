@@ -427,16 +427,18 @@ function Run-M200(){
 function Run-X200(){
     Async {
 
-    try {
-            $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
+        New-Item -ItemType File -Path "C:\log.log"
+        $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
         $State.tabIndex = 1
 
+        "Now First-Replace" | Out-File "C:\log.log" -Append
         First-Replace
 
         foreach ($Prog in $Global:input_new) {
             if ($count -ge 200) { 
                 # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-    
+            "Now Convert in if" | Out-File "C:\log.log" -Append
+
                 convert-xcs-to-pgmx
     
                 $count = 0
@@ -459,7 +461,8 @@ function Run-X200(){
             $Global:tmpFiles += $tmpPath
             $Global:tmpFiles2 += $tmpPath2
         }
-    
+                "Now Convert" | Out-File "C:\log.log" -Append
+
         convert-xcs-to-pgmx
 
         # Set-Exlamationmarks -files $Global:exclamtionmarks
@@ -472,10 +475,8 @@ function Run-X200(){
             exit
         }
 
-    }
-    catch {
-        $errorbox.AppendText($error)
-    }
+    
+
     }
 }
 

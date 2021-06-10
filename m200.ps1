@@ -9,6 +9,183 @@ Param(
 #----Initial Declarations-------------------------------------#
 #-------------------------------------------------------------#
 
+function Add-StringBefore {
+    param (
+        [array]$insert,
+        [string]$keyword,
+        # in $textfile muss eigentlich immer $Prog.CamPath übergeben werden
+        [string]$textfile,
+        [boolean]$bc
+    )
+    Write-Host "Das ist der insert: $insert"
+    Write-Host "Das ist das keyword: $keyword"
+    Write-Host "Das ist der PFad: $textfile"
+
+    $content = Get-Content $textfile
+
+    Write-Host "Das ist der aktuelle inhalt: $content"
+    $counter = 0
+    $keywordcomplete = ""
+    foreach ($string in $content) {
+
+        if ($string -like "*$keyword*") {
+            if ($bc){
+                $Global:exclamtionmarks += $textfile
+            }
+
+            $keywordcomplete = $string
+
+            $content[$counter] = ""
+            for ($i = 0; $i -lt $insert.Count; $i++) {
+                $content[$counter] = $content[$counter] + $insert[$i] + "`n" 
+            }
+            if ($bc){
+                $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
+                $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
+                $keywordcomplete = $keywordcomplete + ", -1, -1, -1, 0, true, true, 0, 5);"
+                $content[$counter] = $content[$counter] + $keywordcomplete
+            }
+            else {
+                $content[$counter] = $content[$counter] + $keywordcomplete + "`n" 
+            }
+            
+        }
+        $counter++
+    }
+
+
+    $content | Out-File $textfile
+
+
+
+}
+function Set-Exlamationmarks {
+    param (
+        [array]$files
+    )
+    $files = $files | Select-Object -Unique
+    foreach ($textfile in $files) {
+        $textfile = $textfile.Replace("xcs","pgmx")
+        $dir = (Get-Item $textfile).Directory.FullName 
+        $filename = "!!!" + ((Get-Item $textfile).Name)
+        $newsave = $dir + "\" + $filename
+        $content | Out-File $newsave
+        Remove-Item $textfile  
+    }
+}
+function Correct-M200Updated {
+    foreach ($file2 in ((Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName)) {
+        Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
+    $count = 0
+write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
+    $content = Get-Content $file2
+    foreach ($line in $content) {
+        if ($line -like "*CreateRawWorkpiece*"){
+            $newstring = ($content[$count]) -replace ".{43}$"
+            $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
+            $content[$count] = $newstring
+        }
+        if ($line -like "*SetWorkpieceSetupPosition*"){
+            $newstring = ($content[$count]) -replace ".{26}$"
+            $newstring = $newstring + "0.0000, 0.0000, 0.0, 0.0);"
+            $content[$count] = $newstring
+        }
+        $count++
+    }
+
+    $content | Out-File $file2
+
+    }
+
+}
+
+function Open-Dir {
+    Invoke-Item $Global:workingdir 
+}
+
+function First-Replace {
+    foreach ($Prog in $Global:input_new) {
+
+        (Get-Content $Prog.CamPath) | Foreach-Object {
+
+            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+            $_.Replace("SlantedBladeCut", "Saegeschnitt_").
+            Replace("Routing_", "Fraesen_").
+            Replace("VerticalDrilling", "Vertikale Bohrung").
+            Replace("HorizontalDrilling", "Horizontale Bohrung").
+            Replace("PYTHA_INIT_", "Blindes Makro_").
+            Replace("PYTHA_PARK_", "Wegfahrschritt_")
+
+        } | Set-Content $Prog.CamPath
+
+        # Approach- und RetractStrategie ersetzen
+        (Get-Content $Prog.CamPath) | Foreach-Object {
+
+            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+            $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+            Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+
+        } | Set-Content $Prog.CamPath
+
+
+
+        # An- und Abfahrbewegung fliegend bohrend für Nut
+        $insertnut = @()
+        $insertnut += 'SetApproachStrategy(true, false, 1.5);'
+        $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
+        $keywordnut = "CreateSlot"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
+
+        # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
+        $inserttasche = @()
+        $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
+        $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
+        $keywordtasche = "CreateContourPocket"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
+        
+            
+        # Vorritzen, an- und abfahren mit dem Sägeblatt
+        $insertblatt = @()
+        $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
+        $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
+        $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
+        $keywordblatt = "CreateBladeCut"
+        $textfile = $Prog.CamPath
+        Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
+
+    }
+}
+function convert-xcs-to-pgmx {
+    $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
+    Write-Host "!!!!! TMPFiles2: $Global:tmpFiles2" -ForegroundColor Green
+    Write-Output 'GS Ravensburg CAM-Export' $Global:inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $Global:outFiles
+    # Konvertieren in tmp pgmx
+    Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
+    Write-Host $Global:inFiles -ForegroundColor RED
+    Write-Host "INFILES: $Global:inFiles" -ForegroundColor Green
+    & $XConverter -ow -s -report -m 0 -i $Global:inFiles -t $global:Tooling -o $Global:tmpFiles | Out-Default
+    $g = (gci -Path $Global:workingdir).Name
+    Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
+    # Bearbeitungen optimieren
+    Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
+    & $XConverter -ow -s -m 2 -i $Global:tmpFiles -t $global:Tooling -o $Global:tmpFiles2 | Out-Default
+    $g = (gci -Path $Global:workingdir).Name
+    Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
+
+    # Sauger positionieren
+    & $XConverter -ow -s -m 13 -i $Global:tmpFiles2 -t $global:Tooling -o $Global:outFiles | Out-Default
+
+    # Loesche die temporaeren Dateien
+    Remove-Item $Global:tmpFiles  
+	
+    # Loesche die temporaeren Dateien
+    Remove-Item $Global:tmpFiles2
+}
+
+
+
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $Xaml = @"
@@ -237,175 +414,6 @@ $State.WorkingDir = ((get-item $State.WorkingDirTemp | select Directory).Directo
 write-host "Global:workingdir" -Foregroundcolor Green
 
 
-function Add-StringBefore {
-    param (
-        [array]$insert,
-        [string]$keyword,
-        # in $textfile muss eigentlich immer $Prog.CamPath übergeben werden
-        [string]$textfile,
-        [boolean]$bc
-    )
-    Write-Host "Das ist der insert: $insert"
-    Write-Host "Das ist das keyword: $keyword"
-    Write-Host "Das ist der PFad: $textfile"
-
-    $content = Get-Content $textfile
-
-    Write-Host "Das ist der aktuelle inhalt: $content"
-    $counter = 0
-    $keywordcomplete = ""
-    foreach ($string in $content) {
-
-        if ($string -like "*$keyword*") {
-            if ($bc){
-                $Global:exclamtionmarks += $textfile
-            }
-
-            $keywordcomplete = $string
-
-            $content[$counter] = ""
-            for ($i = 0; $i -lt $insert.Count; $i++) {
-                $content[$counter] = $content[$counter] + $insert[$i] + "`n" 
-            }
-            if ($bc){
-                $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
-                $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
-                $keywordcomplete = $keywordcomplete + ", -1, -1, -1, 0, true, true, 0, 5);"
-                $content[$counter] = $content[$counter] + $keywordcomplete
-            }
-            else {
-                $content[$counter] = $content[$counter] + $keywordcomplete + "`n" 
-            }
-            
-        }
-        $counter++
-    }
-
-
-    $content | Out-File $textfile
-
-
-
-}
-function Set-Exlamationmarks {
-    param (
-        [array]$files
-    )
-    $files = $files | Select-Object -Unique
-    foreach ($textfile in $files) {
-        $textfile = $textfile.Replace("xcs","pgmx")
-        $dir = (Get-Item $textfile).Directory.FullName 
-        $filename = "!!!" + ((Get-Item $textfile).Name)
-        $newsave = $dir + "\" + $filename
-        $content | Out-File $newsave
-        Remove-Item $textfile  
-    }
-}
-function Correct-M200Updated {
-    foreach ($file2 in ((Get-ChildItem $Global:workingdir | Where-Object {$_.FullName -like "*_2.xcs"} | Select-Object FullName).FullName)) {
-        Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
-    $count = 0
-write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
-    $content = Get-Content $file2
-    foreach ($line in $content) {
-        if ($line -like "*CreateRawWorkpiece*"){
-            $newstring = ($content[$count]) -replace ".{43}$"
-            $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
-            $content[$count] = $newstring
-        }
-        if ($line -like "*SetWorkpieceSetupPosition*"){
-            $newstring = ($content[$count]) -replace ".{26}$"
-            $newstring = $newstring + "0.0000, 0.0000, 0.0, 0.0);"
-            $content[$count] = $newstring
-        }
-        $count++
-    }
-
-    $content | Out-File $file2
-
-    }
-
-}
-function First-Replace {
-    foreach ($Prog in $Global:input_new) {
-
-        (Get-Content $Prog.CamPath) | Foreach-Object {
-
-            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-            $_.Replace("SlantedBladeCut", "Saegeschnitt_").
-            Replace("Routing_", "Fraesen_").
-            Replace("VerticalDrilling", "Vertikale Bohrung").
-            Replace("HorizontalDrilling", "Horizontale Bohrung").
-            Replace("PYTHA_INIT_", "Blindes Makro_").
-            Replace("PYTHA_PARK_", "Wegfahrschritt_")
-
-        } | Set-Content $Prog.CamPath
-
-        # Approach- und RetractStrategie ersetzen
-        (Get-Content $Prog.CamPath) | Foreach-Object {
-
-            # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-            $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
-            Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
-
-        } | Set-Content $Prog.CamPath
-
-
-
-        # An- und Abfahrbewegung fliegend bohrend für Nut
-        $insertnut = @()
-        $insertnut += 'SetApproachStrategy(true, false, 1.5);'
-        $insertnut += 'SetRetractStrategy(true, false, 1.5, 0);'
-        $keywordnut = "CreateSlot"
-        $textfile = $Prog.CamPath
-        Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
-
-        # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
-        $inserttasche = @()
-        $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
-        $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
-        $keywordtasche = "CreateContourPocket"
-        $textfile = $Prog.CamPath
-        Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
-        
-            
-        # Vorritzen, an- und abfahren mit dem Sägeblatt
-        $insertblatt = @()
-        $insertblatt += 'SetApproachStrategy(true, true, 0.25);'
-        $insertblatt += 'SetRetractStrategy(true, true, 0.25, 0);'
-        $insertblatt += 'CreateSectioningMillingStrategy(5, 80, 0);'
-        $keywordblatt = "CreateBladeCut"
-        $textfile = $Prog.CamPath
-        Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
-
-    }
-}
-function convert-xcs-to-pgmx {
-    $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-    Write-Host "!!!!! TMPFiles2: $Global:tmpFiles2" -ForegroundColor Green
-    Write-Output 'GS Ravensburg CAM-Export' $Global:inFiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $Global:outFiles
-    # Konvertieren in tmp pgmx
-    Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
-    Write-Host $Global:inFiles -ForegroundColor RED
-    Write-Host "INFILES: $Global:inFiles" -ForegroundColor Green
-    & $XConverter -ow -s -report -m 0 -i $Global:inFiles -t $global:Tooling -o $Global:tmpFiles | Out-Default
-    $g = (gci -Path $Global:workingdir).Name
-    Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
-    # Bearbeitungen optimieren
-    Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
-    & $XConverter -ow -s -m 2 -i $Global:tmpFiles -t $global:Tooling -o $Global:tmpFiles2 | Out-Default
-    $g = (gci -Path $Global:workingdir).Name
-    Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
-
-    # Sauger positionieren
-    & $XConverter -ow -s -m 13 -i $Global:tmpFiles2 -t $global:Tooling -o $Global:outFiles | Out-Default
-
-    # Loesche die temporaeren Dateien
-    Remove-Item $Global:tmpFiles  
-	
-    # Loesche die temporaeren Dateien
-    Remove-Item $Global:tmpFiles2
-}
 
 
 

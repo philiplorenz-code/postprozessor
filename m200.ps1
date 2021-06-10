@@ -100,7 +100,7 @@ write-host "HIER STEHT FILE2: $file2" -Foregroundcolor Red
 }
 
 function Open-Dir {
-    Invoke-Item $State.WorkingDir
+    Invoke-Item "C:\Users\theo_\Desktop\"
 }
 
 function First-Replace {
@@ -467,6 +467,10 @@ function Run-M200(){
             exit
         }
 	stop-transcript
+    }
+
+    if ($State.tabIndex -eq 1){
+        exit
     }
     
 }

@@ -488,7 +488,7 @@ $error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
         }
 $error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
     
-
+stop-transcript
     }
 }
 

@@ -437,7 +437,7 @@ function Run-X200(){
         foreach ($Prog in $Global:input_new) {
             if ($count -ge 200) { 
                 # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-            "Now Convert in if" | Out-File "C:\Users\theo_\Desktop\log.log"" -Append
+            "Now Convert in if" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
 
                 convert-xcs-to-pgmx
     

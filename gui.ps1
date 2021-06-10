@@ -5,6 +5,16 @@ Param(
     $SystemProfile, # the valuå can be set in PYTHA Interface Setup
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Program
 )
+
+#Write your code here
+Add-Type -Name Window -Namespace Console -MemberDefinition '
+[DllImport("Kernel32.dll")]
+public static extern IntPtr GetConsoleWindow();
+
+[DllImport("user32.dll")]
+public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
+
+
 ############################################################################
 
 #Hier müssen die Pfade von XConverter und Werkzeugdatei angegeben werden bei 32Bit
@@ -363,97 +373,104 @@ $Xaml = @"
 
 #Write your code here
 function Run-M200(){
-    $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
-    $State.tabIndex = 1
-    First-Replace
-	try {
-	  Correct-M200Updated
-	}
-        catch {}
+    Async{
+        $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
+        $State.tabIndex = 1
+        First-Replace
+	    try {
+	      Correct-M200Updated
+	    }
+            catch {}
 	
 
 
-    foreach ($Prog in $Global:input_new) {
-        if ($count -ge 200) { 
-            # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+        foreach ($Prog in $Global:input_new) {
+            if ($count -ge 200) { 
+                # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
     
-            convert-xcs-to-pgmx
+                convert-xcs-to-pgmx
     
-            $count = 0
-            $Global:inFiles = ""
-            $Global:tmpFiles = ""
-            $Global:tmpFiles2 = ""
-            $Global:outFiles = ""
-        }
+                $count = 0
+                $Global:inFiles = ""
+                $Global:tmpFiles = ""
+                $Global:tmpFiles2 = ""
+                $Global:outFiles = ""
+            }
         
     
-        $xcsPath = $Prog.CamPath
-        $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-        $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-        $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+            $xcsPath = $Prog.CamPath
+            $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+            $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+            $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
         
             
-        $count += 1
-        $Global:inFiles += $xcsPath
-        $Global:outFiles += $pgmxPath
-        $Global:tmpFiles += $tmpPath
-        $Global:tmpFiles2 += $tmpPath2
-    }
-    convert-xcs-to-pgmx
-    Open-Dir
-    Start-Sleep 1
-    if ($error.count -gt 0){
-        $State.tabIndex = 2
-    }
-    else {
-        exit
-    }
+            $count += 1
+            $Global:inFiles += $xcsPath
+            $Global:outFiles += $pgmxPath
+            $Global:tmpFiles += $tmpPath
+            $Global:tmpFiles2 += $tmpPath2
+        }
+        convert-xcs-to-pgmx
+        Open-Dir
+        Start-Sleep 1
+        if ($error.count -gt 0){
+            $State.tabIndex = 2
+        }
+        else {
+            exit
+        }
 
+    }
+    
 }
 
 function Run-X200(){
-    $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
-    $State.tabIndex = 1
+    Async {
 
-    First-Replace
+    
+        $global:Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
+        $State.tabIndex = 1
 
-    foreach ($Prog in $Global:input_new) {
-        if ($count -ge 200) { 
-            # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+        First-Replace
+
+        foreach ($Prog in $Global:input_new) {
+            if ($count -ge 200) { 
+                # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
     
-            convert-xcs-to-pgmx
+                convert-xcs-to-pgmx
     
-            $count = 0
-            $Global:inFiles = ""
-            $Global:tmpFiles = ""
-            $Global:tmpFiles2 = ""
-            $Global:outFiles = ""
-        }
+                $count = 0
+                $Global:inFiles = ""
+                $Global:tmpFiles = ""
+                $Global:tmpFiles2 = ""
+                $Global:outFiles = ""
+            }
         
     
-        $xcsPath = $Prog.CamPath
-        $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-        $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-        $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+            $xcsPath = $Prog.CamPath
+            $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+            $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+            $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
         
             
-        $count += 1
-        $Global:inFiles += $xcsPath
-        $Global:outFiles += $pgmxPath
-        $Global:tmpFiles += $tmpPath
-        $Global:tmpFiles2 += $tmpPath2
-    }
+            $count += 1
+            $Global:inFiles += $xcsPath
+            $Global:outFiles += $pgmxPath
+            $Global:tmpFiles += $tmpPath
+            $Global:tmpFiles2 += $tmpPath2
+        }
     
-    convert-xcs-to-pgmx
+        convert-xcs-to-pgmx
 
-    # Set-Exlamationmarks -files $Global:exclamtionmarks
-    Open-Dir
-    Start-Sleep 1
-    if ($error.count -gt 0){
-        $State.tabIndex = 2
-    }
-    else {
-        exit
+        # Set-Exlamationmarks -files $Global:exclamtionmarks
+        Open-Dir
+        Start-Sleep 1
+        if ($error.count -gt 0){
+            $State.tabIndex = 2
+        }
+        else {
+            exit
+        }
     }
 }
 

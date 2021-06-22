@@ -31,7 +31,7 @@ $Global:input_new = $input
 Write-Output "inputnew "
 Write-Host "inputnew " 
 Write-Warning "inputnew "   
-5 / 0
+
 $Global:input_new | Out-String
 $str = $Global:input_new | Out-String
 Write-Host $str -ForegroundColor Green
@@ -457,7 +457,7 @@ $XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
         Write-Warning "inputnew "   
         $str = $Global:input_new | Out-String
         Write-Host $str -ForegroundColor Green
-        5 / 0
+ 
         $Global:input_new | Out-String
         foreach ($Prog in $Global:input_new) {
             if ($count -ge 200) { 

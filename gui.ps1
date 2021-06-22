@@ -427,7 +427,7 @@ $Global:exclamtionmarks = @()
             $State.tabIndex = 2
         }
         else {
-            exit
+     		$SyncHash.Window.Dispatcher.Invoke( { $Window.Close() } )
         }
 
     }
@@ -502,7 +502,7 @@ $error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
             $State.tabIndex = 2
         }
         else {
-            exit
+             $SyncHash.Window.Dispatcher.Invoke( { $Window.Close() } )
         }
 $error | Out-File "C:\Users\theo_\Desktop\log.log" -Append
     

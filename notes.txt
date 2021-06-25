@@ -1,7 +1,0 @@
-- GUI im Vordergrund #
-
-- zusammenführen!!
-- Werkzeugselektion bei m/x200
-- Unterscheidung der Funktionen nach Button
-- Icon und Name von GUI
-- explorer öffnen mit ii "PFAD"

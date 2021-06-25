@@ -420,8 +420,8 @@ Write-Host "Global:workingdir" -ForegroundColor Green
 function Run-M200 () {
   Async {
     $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
-    Start-Transcript "C:\Users\theo_\Desktop\transcript.txt"
-    Start-Transaction
+    # Start-Transcript "C:\Users\theo_\Desktop\transcript.txt"
+   
     # Global Vars
     $count = 0
 
@@ -463,11 +463,11 @@ function Run-M200 () {
     Start-Sleep 1
     if ($error.Count -gt 0) {
       $State.tabIndex = 2
-      Stop-Transcript
+      # Stop-Transcript
     }
     else {
       Stop-Process -Name *powershell*
-      Stop-Transcript
+      # Stop-Transcript
     }
 
   }
@@ -478,7 +478,7 @@ function Run-M200 () {
 function Run-X200 () {
   Async {
     $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
-    Start-Transcript "C:\Users\theo_\Desktop\transcript.txt"
+    # Start-Transcript "C:\Users\theo_\Desktop\transcript.txt"
     # Global Vars
     $count = 0
 
@@ -522,11 +522,11 @@ function Run-X200 () {
     Start-Sleep 1
     if ($error.Count -gt 0) {
       $State.tabIndex = 2
-      Stop-Transcript
+      # Stop-Transcript
     }
     else {
       Stop-Process -Name *powershell*
-      Stop-Transcript
+      # Stop-Transcript
     }
 
 

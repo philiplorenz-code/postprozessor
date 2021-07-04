@@ -9,6 +9,8 @@ param(
 #----Initial Declarations-------------------------------------#
 #-------------------------------------------------------------#
 
+$input | get-member
+
 function Add-StringBefore {
   param(
     [array]$insert,

@@ -2,14 +2,15 @@
 param(
   $SystemPath,# the value can be set in PYTHA Interface Setup
   $SystemCommand,# the value can be set in PYTHA Interface Setup
-  $SystemProfile,# the valuå can be set in PYTHA Interface Setup
+  $SystemProfile,# the value can be set in PYTHA Interface Setup
   [Parameter(Mandatory = $true,ValueFromPipeline = $true)] $Program
 )
 #-------------------------------------------------------------#
 #----Initial Declarations-------------------------------------#
 #-------------------------------------------------------------#
 
-$input | get-member
+
+
 
 function Add-StringBefore {
   param(
@@ -102,7 +103,7 @@ function Correct-M200Updated {
 }
 
 function Open-Dir {
-  Invoke-Item "C:\Users\theo_\Desktop\"
+  Invoke-Item $State.WorkingDir
 }
 
 function First-Replace {
@@ -120,12 +121,15 @@ function First-Replace {
 
     } | Set-Content $Prog.CamPath
 
+
+    
+
     # Approach- und RetractStrategie ersetzen
     (Get-Content $Prog.CamPath) | ForEach-Object {
 
-      # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
+      # Im Bogen an- und abfahren mit 5 mm Überlappung für Bauteilumfräsung
       $_.Replace("SetApproachStrategy(true, false, -1)","SetApproachStrategy(false, true, 2)").
-      Replace("SetRetractStrategy(true, false, -1, 0)","SetRetractStrategy(false, true, 2, 5)")
+         Replace("SetRetractStrategy(true, false, -1, 0)","SetRetractStrategy(false, true, 2, 5)")
 
     } | Set-Content $Prog.CamPath
 
@@ -139,10 +143,11 @@ function First-Replace {
     $textfile = $Prog.CamPath
     Add-StringBefore -insert $insertnut -keyword $keywordnut -textfile $textfile -bc $false
 
-    # Anfahrbewegung fliegend bohrend und Strategie für Tasche (funktioniert bisher nur für eine Tasche!!!)
+    # Anfahrbewegung fliegend bohrend und Strategie für Tasche (wenn nur 2 inserttaschen aktiv sind geht es nicht richtig)
     $inserttasche = @()
-    $inserttasche += 'SetApproachStrategy(true, false, 1.5);'
-    $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 5, 0, 0);'
+    $inserttasche += 'SetApproachStrategy(true, false, 5);'
+    $inserttasche += 'SetRetractStrategy(true, false, 5, 5);'
+    $inserttasche += 'CreateContourParallelStrategy(true, 0, true, 8, 0, 0);'
     $keywordtasche = "CreateContourPocket"
     $textfile = $Prog.CamPath
     Add-StringBefore -insert $inserttasche -keyword $keywordtasche -textfile $textfile -bc $false
@@ -158,26 +163,33 @@ function First-Replace {
     Add-StringBefore -insert $insertblatt -keyword $keywordblatt -textfile $textfile -bc $true
 
   }
+
 }
-function convert-xcs-to-pgmx {
+function convert-xcs-to-pgmx_x200 {
+
+  #XConverter Maestro 64 Bit
   $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
+  #Maschineneinstellung X200
+  $X200 = "C:\Users\Public\Documents\SCM Group\Maestro\Environments\X200"
+
+
   Write-Host "!!!!! TMPFiles2: $State.tmpFiles2" -ForegroundColor Green
   Write-Output 'GS Ravensburg CAM-Export' $State.Infiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $State.outFiles
   # Konvertieren in tmp pgmx
   Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
   Write-Host $State.Infiles -ForegroundColor RED
   Write-Host "INFILES: $State.Infiles" -ForegroundColor Green
-  & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -t $State.Tooling -o $State.tmpFiles | Out-Default
+  & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -env $X200 -o $State.tmpFiles | Out-Default
   $g = (Get-ChildItem -Path $State.WorkingDir).Name
   Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
   # Bearbeitungen optimieren
   Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
-  & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -t $State.Tooling -o $State.tmpFiles2 | Out-Default
+  & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -env $X200 -o $State.tmpFiles2 | Out-Default
   $g = (Get-ChildItem -Path $State.WorkingDir).Name
   Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
 
   # Sauger positionieren
-  & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -t $State.Tooling -o $State.outFiles | Out-Default
+  & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -env $X200 -o $State.outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
   Remove-Item $State.tmpFiles
@@ -186,6 +198,37 @@ function convert-xcs-to-pgmx {
   Remove-Item $State.tmpFiles2
 }
 
+function convert-xcs-to-pgmx_m200 {
+
+  #XConverter Maestro 64 Bit
+  $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
+  #Maschineneinstellung M200
+  $M200 = "C:\Users\Public\Documents\SCM Group\Maestro\Environments\M200"
+
+  Write-Host "!!!!! TMPFiles2: $State.tmpFiles2" -ForegroundColor Green
+  Write-Output 'GS Ravensburg CAM-Export' $State.Infiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $State.outFiles
+  # Konvertieren in tmp pgmx
+  Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
+  Write-Host $State.Infiles -ForegroundColor RED
+  Write-Host "INFILES: $State.Infiles" -ForegroundColor Green
+  & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -env $M200 -o $State.tmpFiles | Out-Default
+  $g = (Get-ChildItem -Path $State.WorkingDir).Name
+  Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
+  # Bearbeitungen optimieren
+  Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
+  & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -env $M200 -o $State.tmpFiles2 | Out-Default
+  $g = (Get-ChildItem -Path $State.WorkingDir).Name
+  Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
+
+  # Sauger positionieren
+  & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -env $M200 -o $State.outFiles | Out-Default
+
+  # Loesche die temporaeren Dateien
+  Remove-Item $State.tmpFiles
+
+  # Loesche die temporaeren Dateien
+  Remove-Item $State.tmpFiles2
+}
 
 
 Add-Type -AssemblyName PresentationCore,PresentationFramework
@@ -217,7 +260,8 @@ $Xaml = @"
           <Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon3" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\icon.png"/>
           <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Gewerbliche Schule Ravensburg" Margin="387,414,0,0" Name="IconText3" FontFamily="Yu Gothic UI Bold *" FontSize="021" FontWeight="DemiBold"/>
           <Image HorizontalAlignment="Left" Height="102" VerticalAlignment="Top" Width="102" Margin="12,5,0,0" Name="errorimage" Source="C:\DevStuff\Projekt\Theo\error.png"/>
-          <TextBox HorizontalAlignment="Left" VerticalAlignment="Top" Height="306" Width="471" Text="" TextWrapping="Wrap" Margin="292,82,0,0" Name="errorbox"/>
+          
+          <TextBox HorizontalAlignment="Left" VerticalAlignment="Top" Height="102" Width="356" TextWrapping="Wrap" Margin="94,224,0,0" Text="In der Konfiguration liegt ein Fehler vor! Bitte oeffne den Exportbericht!"/>
           <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" Text="Fehler:" Margin="664,29,0,0" FontFamily="Yu Gothic UI Bold *" FontSize="021" FontWeight="DemiBold"/>
         </Grid>
       </TabItem>
@@ -226,7 +270,7 @@ $Xaml = @"
 </Window>
 
 "@
-
+# <TextBox HorizontalAlignment="Left" VerticalAlignment="Top" Height="306" Width="471" Text="In der Konfiguration liegt ein Fehler vor!" TextWrapping="Wrap" Margin="292,82,0,0" Name="errorbox"/>
 #-------------------------------------------------------------#
 #----Control Event Handlers-----------------------------------#
 #-------------------------------------------------------------#
@@ -287,7 +331,7 @@ $DataObject = ConvertFrom-Json @"
 
 {
     "tabIndex" : 0,
-    "GlobalError" : {},
+    "GlobalError" : null,
     "Systempath" : null,
     "SystemCommand" : null,
     "SystemProfile" : null,
@@ -311,6 +355,7 @@ FillDataContext @("tabIndex","GlobalError","Systempath","SystemCommand","SystemP
 
 $Window.DataContext = $DataContext
 Set-Binding -Target $name -Property $([System.Windows.Controls.TabControl]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
+
 
 
 
@@ -391,8 +436,13 @@ $State.Systempath = $Systempath
 $State.SystemCommand = $SystemCommand
 $State.SystemProfile = $SystemProfile
 $State.Program = $Program
+
+#XConverter Maestro 64 Bit
 $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-$State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
+
+#Werkzeugdatei Maestro 64 Bit
+$State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\ST.tlgx'
+
 $State.input = $input
 
 $State.Infiles = @()
@@ -404,8 +454,7 @@ $State.WorkingDir
 $State.WorkingDirTemp
 
 
-
-# WorkDir
+<#
 if (($State.input.CamPath) -is [string]) {
   $State.WorkingDirTemp = ($State.input.CamPath)
 }
@@ -414,14 +463,21 @@ else {
 }
 $State.WorkingDir = ((Get-Item $State.WorkingDirTemp | Select-Object Directory).Directory).FullName
 Write-Host "Global:workingdir" -ForegroundColor Green
+#>
 
 
-
-
+# WorkDir
+# Get SavePath
+$raw = [System.IO.DirectoryInfo]$input.CamPath
+$State.WorkingDir = $raw.Parent.FullName
 
 function Run-M200 () {
   Async {
-    $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def.tlgx'
+    $path = $State.WorkingDir + "\exportbericht.txt"
+    Start-Transcript -Path $path
+    # Werkzeugdatei M200 Maestro 64 Bit
+    $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\defM200.tlgx'
+
     # Start-Transcript "C:\Users\theo_\Desktop\transcript.txt"
    
     # Global Vars
@@ -438,7 +494,7 @@ function Run-M200 () {
       if ($count -ge 200) {
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
 
-        convert-xcs-to-pgmx
+        convert-xcs-to-pgmx_m200
 
         $count = 0
         $State.Infiles = ""
@@ -460,14 +516,16 @@ function Run-M200 () {
       [array]$State.tmpFiles += $tmpPath
       [array]$State.tmpFiles2 += $tmpPath2
     }
-    convert-xcs-to-pgmx
-    Open-Dir
+    convert-xcs-to-pgmx_m200
+
     Start-Sleep 1
     if ($error.Count -gt 0) {
       $State.tabIndex = 2
-      # Stop-Transcript
+      Stop-Transcript
+      Open-Dir
     }
     else {
+      Open-Dir
       Stop-Process -Name *powershell*
       # Stop-Transcript
     }
@@ -479,8 +537,20 @@ function Run-M200 () {
 
 function Run-X200 () {
   Async {
-    $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
-    # Start-Transcript "C:\Users\theo_\Desktop\transcript.txt"
+
+    $path = $State.WorkingDir + "\exportbericht.txt"
+    Start-Transcript -Path $path
+
+    # Clear CreateRawWorkpiece 
+    $temppath = $State.WorkingDir + "\temp.xcs"
+    Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'CreateRawWorkpiece*'} | Set-Content $temppath
+    Get-Content $temppath | Set-Content $State.input.CamPath
+    Remove-Item $temppath
+
+
+    #Werkzeugdatei X200 Maestro 64 Bit
+    $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\ST.tlgx'
+
     # Global Vars
     $count = 0
 
@@ -488,12 +558,14 @@ function Run-X200 () {
 
     First-Replace
 
+
+
     foreach ($Prog in $State.input) {
       if ($count -ge 200) {
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
         "Now Convert in if" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
 
-        convert-xcs-to-pgmx
+        convert-xcs-to-pgmx_x200
 
         $count = 0
         $State.Infiles = ""
@@ -519,16 +591,17 @@ function Run-X200 () {
       [array]$State.tmpFiles2 += $tmpPath2
     }
 
-    convert-xcs-to-pgmx
-    Open-Dir
+    convert-xcs-to-pgmx_x200
     Start-Sleep 1
     if ($error.Count -gt 0) {
       $State.tabIndex = 2
-      # Stop-Transcript
+      Stop-Transcript
+      Open-Dir
     }
     else {
+      Open-Dir
       Stop-Process -Name *powershell*
-      # Stop-Transcript
+      Stop-Transcript
     }
 
 
@@ -544,8 +617,13 @@ $State.Systempath = $Systempath
 $State.SystemCommand = SystemCommand
 $State.SystemProfile = SystemProfile
 $State.Program = Program
+
+#SConverter Maestro 64 Bit
 $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-$State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\def1.tlgx'
+
+#Werkzeugdatei Maestro 64 Bit
+$State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\ST.tlgx'
+
 $State.input = $input
 $State.Infiles
 $State.tmpFiles
@@ -557,4 +635,3 @@ $State.WorkingDirTemp
 
 
 $Window.ShowDialog()
-

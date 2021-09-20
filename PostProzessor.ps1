@@ -518,7 +518,12 @@ function Run-M200 () {
     }
     convert-xcs-to-pgmx_m200
 
+    
     Start-Sleep 1
+    
+    
+    
+    
     if ($error.Count -gt 0) {
       $State.tabIndex = 2
       Stop-Transcript
@@ -527,7 +532,7 @@ function Run-M200 () {
     else {
       Open-Dir
       Stop-Process -Name *powershell*
-      # Stop-Transcript
+      Stop-Transcript
     }
 
   }

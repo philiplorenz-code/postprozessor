@@ -14,10 +14,10 @@ cd $DesktopPath
 New-Item -ItemType Directory -Name "JSON_Settings"
 cd "JSON_Settings"
 
-$SystemPath | ConvertTo-Json | Out-File -FilePath "./systempath.txt"
-$SystemCommand | ConvertTo-Json | Out-File -FilePath "./systempath.txt"
-$SystemProfile | ConvertTo-Json | Out-File -FilePath "./systempath.txt"
-$input | ConvertTo-Json | Out-File -FilePath "./systempath.txt"
+$SystemPath | ConvertTo-Json | Out-File -FilePath "./SystemPath.txt"
+$SystemCommand | ConvertTo-Json | Out-File -FilePath "./SystemCommand.txt"
+$SystemProfile | ConvertTo-Json | Out-File -FilePath "./SystemProfile.txt"
+$input | ConvertTo-Json | Out-File -FilePath "./input.txt"
 
 
 

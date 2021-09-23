@@ -468,8 +468,17 @@ Write-Host "Global:workingdir" -ForegroundColor Green
 
 # WorkDir
 # Get SavePath
-$raw = [System.IO.DirectoryInfo]$input.CamPath
-$State.WorkingDir = $raw.Parent.FullName
+# WorkDir
+# Get SavePath
+if ($input -is [array]) {
+  $inputarray = $input[0]
+  $raw = [System.IO.DirectoryInfo]$inputarray.CamPath
+  $State.WorkingDir = $raw.Parent.FullName
+}
+else{
+  $raw = [System.IO.DirectoryInfo]$input.CamPath
+  $State.WorkingDir = $raw.Parent.FullName
+}
 
 function Run-M200 () {
   Async {

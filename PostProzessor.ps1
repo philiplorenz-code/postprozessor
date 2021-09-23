@@ -124,14 +124,7 @@ function First-Replace {
 
     
 
-    # Approach- und RetractStrategie ersetzen
-    (Get-Content $Prog.CamPath) | ForEach-Object {
 
-      # Im Bogen an- und abfahren mit 5 mm Überlappung für Bauteilumfräsung
-      $_.Replace("SetApproachStrategy(true, false, -1)","SetApproachStrategy(false, true, 2)").
-         Replace("SetRetractStrategy(true, false, -1, 0)","SetRetractStrategy(false, true, 2, 5)")
-
-    } | Set-Content $Prog.CamPath
 
 
 
@@ -494,6 +487,17 @@ function Run-M200 () {
 
     $State.tabIndex = 1
     First-Replace
+
+    Foreach ($Prog in $State.input){
+      # Approach- und RetractStrategie ersetzen
+      (Get-Content $Prog.CamPath) | ForEach-Object {
+
+        # Im Bogen an- und abfahren mit 5 mm Überlappung für Bauteilumfräsung
+        $_.Replace("SetApproachStrategy(true, false, -1)","SetApproachStrategy(false, true, 2)").
+          Replace("SetRetractStrategy(true, false, -1, 0)","SetRetractStrategy(false, true, 2, 5)")
+
+      } | Set-Content $Prog.CamPath
+    }
 
     # Edit Set MachineParameters
     if ($State.input -is [array]){

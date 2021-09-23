@@ -555,11 +555,23 @@ function Run-X200 () {
     $path = $State.WorkingDir + "\exportbericht.txt"
     Start-Transcript -Path $path
 
+
     # Clear CreateRawWorkpiece 
-    $temppath = $State.WorkingDir + "\temp.xcs"
-    Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'CreateRawWorkpiece*'} | Set-Content $temppath
-    Get-Content $temppath | Set-Content $State.input.CamPath
-    Remove-Item $temppath
+    if ($State.input -is [array]){
+      foreach ($one in $State.input){
+          $temppath = $State.WorkingDir + "\temp.xcs"
+          Get-Content $one.CamPath | Where-Object {$_ -notlike 'CreateRawWorkpiece*'} | Set-Content $temppath
+          Get-Content $temppath | Set-Content $one.CamPath
+          Remove-Item $temppath
+      }
+
+    }
+    else {
+        $temppath = $State.WorkingDir + "\temp.xcs"
+        Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'CreateRawWorkpiece*'} | Set-Content $temppath
+        Get-Content $temppath | Set-Content $State.input.CamPath
+        Remove-Item $temppath
+    }
 
 
     #Werkzeugdatei X200 Maestro 64 Bit

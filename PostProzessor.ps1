@@ -494,6 +494,29 @@ function Run-M200 () {
 
     $State.tabIndex = 1
     First-Replace
+
+    # Edit Set MachineParameters
+    if ($State.input -is [array]){
+      foreach ($one in $State.input){
+          $temppath = $State.WorkingDir + "\temp.xcs"
+          $currentcontent = Get-Content $one.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
+          'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+          $currentcontent | Add-Content $temppath
+          Get-Content $temppath | Set-Content $one.CamPath
+          Remove-Item $temppath
+      }
+  
+      }
+      else {
+          $temppath = $State.WorkingDir + "\temp.xcs"
+          $currentcontent = Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
+          'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+          $currentcontent | Add-Content $temppath
+          Get-Content $temppath | Set-Content $State.input.CamPath
+          Remove-Item $temppath
+      }
+    
+
     try {
       Correct-M200Updated
     }
@@ -572,6 +595,29 @@ function Run-X200 () {
         Get-Content $temppath | Set-Content $State.input.CamPath
         Remove-Item $temppath
     }
+
+    # Edit Set MachineParameters
+    if ($State.input -is [array]){
+    foreach ($one in $State.input){
+        $temppath = $State.WorkingDir + "\temp.xcs"
+        $currentcontent = Get-Content $one.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
+        'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
+        $currentcontent | Add-Content $temppath
+        Get-Content $temppath | Set-Content $one.CamPath
+        Remove-Item $temppath
+    }
+
+    }
+    else {
+        $temppath = $State.WorkingDir + "\temp.xcs"
+        $currentcontent = Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
+        'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
+        $currentcontent | Add-Content $temppath
+        Get-Content $temppath | Set-Content $State.input.CamPath
+        Remove-Item $temppath
+    }
+
+
 
 
     #Werkzeugdatei X200 Maestro 64 Bit

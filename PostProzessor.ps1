@@ -80,7 +80,7 @@ function Set-Exlamationmarks {
 }
 
 
-# M200 Spezifische Funktion
+# M200 Spezifische Funktion (sorgt dafür, dass bei einer zweiten Datei das CreateRawWorkPiece genullt wird)
 function Correct-M200 {
   foreach ($file2 in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
@@ -127,13 +127,6 @@ function First-Replace {
       Replace("PYTHA_PARK_","Wegfahrschritt_")
 
     } | Set-Content $Prog.CamPath
-
-
-    
-
-
-
-
 
     # An- und Abfahrbewegung fliegend bohrend für Nut
     $insertnut = @()
@@ -465,6 +458,7 @@ function Run-M200 () {
     }
 
     # Edit Set MachineParameters
+    # Wenn Array
     if ($State.input -is [array]){
       foreach ($one in $State.input){
           $temppath = $State.WorkingDir + "\temp.xcs"
@@ -476,6 +470,7 @@ function Run-M200 () {
       }
   
       }
+      # Wenn kein Array
       else {
           $temppath = $State.WorkingDir + "\temp.xcs"
           $currentcontent = Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
@@ -491,6 +486,8 @@ function Run-M200 () {
     }
     catch {}
 
+
+    # CNC-Software nativ
     foreach ($Prog in $State.input) {
       if ($count -ge 200) {
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
@@ -519,7 +516,7 @@ function Run-M200 () {
     }
     convert-xcs-to-pgmx_m200
 
-    
+    # Kurz warten
     Start-Sleep 1
     
     

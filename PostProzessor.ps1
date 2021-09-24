@@ -11,7 +11,7 @@ param(
 
 
 
-
+# Ermöglicht es einen Text vor einem definierten anderen Text einzufügen
 function Add-StringBefore {
   param(
     [array]$insert,
@@ -62,6 +62,8 @@ function Add-StringBefore {
 
 
 }
+
+# Aktuell nicht in Verwendung:
 function Set-Exlamationmarks {
   param(
     [array]$files
@@ -76,7 +78,10 @@ function Set-Exlamationmarks {
     Remove-Item $textfile
   }
 }
-function Correct-M200Updated {
+
+
+# M200 Spezifische Funktion
+function Correct-M200 {
   foreach ($file2 in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
@@ -102,10 +107,12 @@ function Correct-M200Updated {
 
 }
 
+# Öffnet das Verzeichnis, in welchem die Daten gespeichert werden
 function Open-Dir {
   Invoke-Item $State.WorkingDir
 }
 
+# Erste Änderungen für die Dateien, die für alle Maschinen gültig sind
 function First-Replace {
   foreach ($Prog in $State.input) {
 
@@ -158,39 +165,8 @@ function First-Replace {
   }
 
 }
-function convert-xcs-to-pgmx_x200 {
 
-  #XConverter Maestro 64 Bit
-  $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-  #Maschineneinstellung X200
-  $X200 = "C:\Users\Public\Documents\SCM Group\Maestro\Environments\X200"
-
-
-  Write-Host "!!!!! TMPFiles2: $State.tmpFiles2" -ForegroundColor Green
-  Write-Output 'GS Ravensburg CAM-Export' $State.Infiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $State.outFiles
-  # Konvertieren in tmp pgmx
-  Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
-  Write-Host $State.Infiles -ForegroundColor RED
-  Write-Host "INFILES: $State.Infiles" -ForegroundColor Green
-  & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -env $X200 -o $State.tmpFiles | Out-Default
-  $g = (Get-ChildItem -Path $State.WorkingDir).Name
-  Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
-  # Bearbeitungen optimieren
-  Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
-  & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -env $X200 -o $State.tmpFiles2 | Out-Default
-  $g = (Get-ChildItem -Path $State.WorkingDir).Name
-  Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
-
-  # Sauger positionieren
-  & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -env $X200 -o $State.outFiles | Out-Default
-
-  # Loesche die temporaeren Dateien
-  Remove-Item $State.tmpFiles
-
-  # Loesche die temporaeren Dateien
-  Remove-Item $State.tmpFiles2
-}
-
+# Interaktion mit nativer CNC-Software
 function convert-xcs-to-pgmx_m200 {
 
   #XConverter Maestro 64 Bit
@@ -223,6 +199,9 @@ function convert-xcs-to-pgmx_m200 {
   Remove-Item $State.tmpFiles2
 }
 
+#############################################################################################################################################################################################################
+# Beginn GUI Zeug
+#############################################################################################################################################################################################################
 
 Add-Type -AssemblyName PresentationCore,PresentationFramework
 
@@ -415,8 +394,13 @@ function Async ($scriptBlock) { Start-RunspaceTask $scriptBlock @([psobject]@{ N
 Start-RunspaceTask $JobCleanupScript @([psobject]@{ Name = 'Jobs'; Variable = $Jobs })
 
 
+#############################################################################################################################################################################################################
+# Ende GUI Zeug
+#############################################################################################################################################################################################################
 
-#No Console
+
+
+# Verhindert, dass eine PowerShell-Konsole angezeigt wird (lediglich GUI wird an Frontend ausgegeben)
 Add-Type -Name Window -Namespace Console -MemberDefinition '
 [DllImport("Kernel32.dll")]
 public static extern IntPtr GetConsoleWindow();
@@ -424,12 +408,11 @@ public static extern IntPtr GetConsoleWindow();
 public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
 [Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(),0)
 
-# State-Variables
+# State-Variables: Programm ist multithreaded - diese Variablen sind aus jedem Thread heraus lesend/schreibend zugreifbar
 $State.Systempath = $Systempath
 $State.SystemCommand = $SystemCommand
 $State.SystemProfile = $SystemProfile
 $State.Program = $Program
-
 
 $State.input = $input
 
@@ -441,23 +424,6 @@ $State.outFiles = @()
 $State.WorkingDir
 $State.WorkingDirTemp
 
-
-<#
-if (($State.input.CamPath) -is [string]) {
-  $State.WorkingDirTemp = ($State.input.CamPath)
-}
-else {
-  $State.WorkingDirTemp = $State.input.CamPath[0]
-}
-$State.WorkingDir = ((Get-Item $State.WorkingDirTemp | Select-Object Directory).Directory).FullName
-Write-Host "Global:workingdir" -ForegroundColor Green
-#>
-
-
-# WorkDir
-# Get SavePath
-# WorkDir
-# Get SavePath
 if ($input -is [array]) {
   $inputarray = $input[0]
   $raw = [System.IO.DirectoryInfo]$inputarray.CamPath
@@ -468,6 +434,10 @@ else{
   $State.WorkingDir = $raw.Parent.FullName
 }
 
+
+
+
+# M200-spezifische Änderungen
 function Run-M200 () {
   Async {
     $path = $State.WorkingDir + "\exportbericht.txt"
@@ -517,7 +487,7 @@ function Run-M200 () {
     
 
     try {
-      Correct-M200Updated
+      Correct-M200
     }
     catch {}
 
@@ -571,6 +541,8 @@ function Run-M200 () {
 
 }
 
+
+# X200-spezifische Änderungen
 function Run-X200 () {
   Async {
 
@@ -680,29 +652,11 @@ function Run-X200 () {
 }
 
 
-
-
-
-
-$State.Systempath = $Systempath
-$State.SystemCommand = SystemCommand
-$State.SystemProfile = SystemProfile
-$State.Program = Program
-
-#SConverter Maestro 64 Bit
+# Definition der Pfade zu Speicherdateien
+# SConverter Maestro 64 Bit
 $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-
-#Werkzeugdatei Maestro 64 Bit
+# Werkzeugdatei Maestro 64 Bit
 $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\ST.tlgx'
-
-$State.input = $input
-$State.Infiles
-$State.tmpFiles
-$State.tmpFiles2
-$State.outFiles
-$State.WorkingDir
-$State.WorkingDirTemp
-
 
 
 $Window.ShowDialog()

@@ -430,11 +430,6 @@ $State.SystemCommand = $SystemCommand
 $State.SystemProfile = $SystemProfile
 $State.Program = $Program
 
-#XConverter Maestro 64 Bit
-$State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-
-#Werkzeugdatei Maestro 64 Bit
-$State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\ST.tlgx'
 
 $State.input = $input
 

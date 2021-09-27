@@ -81,7 +81,7 @@ function Set-Exlamationmarks {
 
 
 # M200 Spezifische Funktion (sorgt dafür, dass bei einer zweiten Datei das CreateRawWorkPiece genullt wird)
-function Correct-M200 {
+function Correct-Offset_2 {
   foreach ($file2 in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
     $count = 0
@@ -159,7 +159,43 @@ function First-Replace {
 
 }
 
-# Interaktion mit nativer CNC-Software
+# Interaktion mit nativer CNC-Software (X200)
+
+function convert-xcs-to-pgmx_x200 {
+
+  #XConverter Maestro 64 Bit
+  $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
+  #Maschineneinstellung X200
+  $X200 = "C:\Users\Public\Documents\SCM Group\Maestro\Environments\X200"
+
+
+  Write-Host "!!!!! TMPFiles2: $State.tmpFiles2" -ForegroundColor Green
+  Write-Output 'GS Ravensburg CAM-Export' $State.Infiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $State.outFiles
+  # Konvertieren in tmp pgmx
+  Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
+  Write-Host $State.Infiles -ForegroundColor RED
+  Write-Host "INFILES: $State.Infiles" -ForegroundColor Green
+  & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -env $X200 -o $State.tmpFiles | Out-Default
+  $g = (Get-ChildItem -Path $State.WorkingDir).Name
+  Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
+  # Bearbeitungen optimieren
+  Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
+  & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -env $X200 -o $State.tmpFiles2 | Out-Default
+  $g = (Get-ChildItem -Path $State.WorkingDir).Name
+  Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
+
+  # Sauger positionieren
+  & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -env $X200 -o $State.outFiles | Out-Default
+
+  # Loesche die temporaeren Dateien
+  Remove-Item $State.tmpFiles
+
+  # Loesche die temporaeren Dateien
+  Remove-Item $State.tmpFiles2
+}
+
+# Interaktion mit nativer CNC-Software (M200)
+
 function convert-xcs-to-pgmx_m200 {
 
   #XConverter Maestro 64 Bit
@@ -435,8 +471,6 @@ function Run-M200 () {
   Async {
     $path = $State.WorkingDir + "\exportbericht.txt"
     Start-Transcript -Path $path
-    # Werkzeugdatei M200 Maestro 64 Bit
-    $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\defM200.tlgx'
 
     # Start-Transcript "C:\Users\theo_\Desktop\transcript.txt"
    
@@ -482,7 +516,7 @@ function Run-M200 () {
     
 
     try {
-      Correct-M200
+      Correct-Offset_2
     }
     catch {}
 
@@ -585,12 +619,6 @@ function Run-X200 () {
         Remove-Item $temppath
     }
 
-
-
-
-    #Werkzeugdatei X200 Maestro 64 Bit
-    $State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\ST.tlgx'
-
     # Global Vars
     $count = 0
 
@@ -599,7 +627,11 @@ function Run-X200 () {
     First-Replace
 
 
-
+    try {
+      Correct-Offset_2
+    }
+    catch {}
+    
     foreach ($Prog in $State.input) {
       if ($count -ge 200) {
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
@@ -652,8 +684,7 @@ function Run-X200 () {
 # Definition der Pfade zu Speicherdateien
 # SConverter Maestro 64 Bit
 $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
-# Werkzeugdatei Maestro 64 Bit
-$State.Tooling = 'C:\Users\Public\Documents\SCM Group\Maestro\Tlgx\ST.tlgx'
+
 
 
 $Window.ShowDialog()

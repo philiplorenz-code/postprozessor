@@ -651,9 +651,12 @@ function Run-X200 () {
 
 
     try {
+      Write-Output "TRY"
       Correct-Offset_2_X200
     }
-    catch {}
+    catch {
+      Write-Output "CATCH"
+    }
     
     foreach ($Prog in $State.input) {
       if ($count -ge 200) {

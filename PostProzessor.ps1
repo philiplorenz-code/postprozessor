@@ -80,7 +80,7 @@ function Set-Exlamationmarks {
 }
 
 
-# M200 Spezifische Funktion (sorgt dafür, dass bei einer zweiten Datei das CreateRawWorkPiece genullt wird)
+# Sorgt dafür, dass bei einer zweiten Datei das CreateRawWorkPiece genullt wird
 function Correct-Offset_2 {
   foreach ($file2 in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
     Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green

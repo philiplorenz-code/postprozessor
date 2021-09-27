@@ -119,7 +119,7 @@ function Correct-Offset_2_X200 {
       if ($line -like "*SetWorkpieceSetupPosition*") {
         $newstring = ($content[$count]) -replace ".{26}$"
         $newstring = $newstring + "0.0000, 0.0000, 0.0, 0.0);"
-        $content[$count] = $newstring
+        $content[$count] = "TESTTESTTESTTTEST"
       }
       $count++
     }

@@ -108,27 +108,6 @@ function Correct-Offset_2 {
 }
 
 
-# Sorgt dafür, dass bei einer zweiten Datei das CreateRawWorkPiece genullt wird
-function Correct-Offset_2_X200 {
-  foreach ($file2 in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
-    Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
-    $count = 0
-    Write-Host "HIER STEHT FILE2: $file2" -ForegroundColor Red
-    $content = Get-Content $file2
-    foreach ($line in $content) {
-      if ($line -like "*SetWorkpieceSetupPosition*") {
-        $newstring = ($content[$count]) -replace ".{26}$"
-        $newstring = $newstring + "0.0000, 0.0000, 0.0, 0.0);"
-        $content[$count] = $newstring
-      }
-      $count++
-    }
-
-    $content | Out-File $file2
-
-  }
-
-}
 
 # Öffnet das Verzeichnis, in welchem die Daten gespeichert werden
 function Open-Dir {

@@ -63,6 +63,36 @@ function Add-StringBefore {
 
 }
 
+function Replace-SetMacroParam(){
+  foreach ($Filename in $State.input) {
+    $charCount = ($Filename.ToCharArray() | Where-Object {$_ -eq '_'} | Measure-Object).Count
+    if($charCount -gt 3){
+
+      $Filename = Split-Path $Filename -leaf
+      $Elements = $Filename.split('_')
+      
+      $MM = $Elements[3]
+
+      if($Filename -like "*__*"){
+        $MM = 0
+      }
+
+      $content = Get-Content $Filename
+      $output = @()
+      foreach ($string in $content) {
+        $output += $string
+        if ($string -like "*SetMacroParam*Angle*") {
+          $output += 'SetMacroParam("Depth", ' + $MM + ');'
+        }
+
+      }
+
+      Set-Content -Path $Filename -Value $output
+      
+    }
+  }
+}
+
 # Aktuell nicht in Verwendung:
 function Set-Exlamationmarks {
   param(
@@ -481,6 +511,7 @@ function Run-M200 () {
 
     $State.tabIndex = 1
     First-Replace
+    Replace-SetMacroParam
 
     Foreach ($Prog in $State.input){
       # Approach- und RetractStrategie ersetzen
@@ -627,6 +658,7 @@ function Run-X200 () {
     $State.tabIndex = 1
 
     First-Replace
+    Replace-SetMacroParam
 
 
     try {

@@ -65,6 +65,7 @@ function Add-StringBefore {
 
 function Replace-SetMacroParam(){
   foreach ($Filename in $State.input) {
+    $Filename = $Filename.CamPath
     $charCount = ($Filename.ToCharArray() | Where-Object {$_ -eq '_'} | Measure-Object).Count
     if($charCount -gt 3){
 

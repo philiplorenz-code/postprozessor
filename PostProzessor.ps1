@@ -368,11 +368,8 @@ FillDataContext @("tabIndex","GlobalError","Systempath","SystemCommand","SystemP
 # TODO - das hier gerade ziehen!! Binding setzen zsm mit poshgui!
 $Window.DataContext = $DataContext
 Set-Binding -Target $name -Property $([System.Windows.Controls.TabControl]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
-Set-Binding -Target $name -Property $([System.Windows.Controls.CheckBox]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
-Set-Binding -Target $kzq7u9ozqshc4 -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 2 -Name "checked" 
-Set-Binding -Target $kzq7u9ozqshc4 -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 2 -Name "checked" 
-
-
+Set-Binding -Target $m200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 1 -Name "m200cb" 
+Set-Binding -Target $x200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 2 -Name "x200cb" 
 
 
 

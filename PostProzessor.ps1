@@ -12,86 +12,73 @@ param(
 
 
 # Ermöglicht es einen Text vor einem definierten anderen Text einzufügen
-function Add-StringBefore {
-  param(
-    [array]$insert,
-    [string]$keyword,
-    # in $textfile muss eigentlich immer $Prog.CamPath übergeben werden
-    [string]$textfile,
-    [boolean]$bc
-  )
-  Write-Host "Das ist der insert: $insert"
-  Write-Host "Das ist das keyword: $keyword"
-  Write-Host "Das ist der PFad: $textfile"
-
+function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, [boolean]$bc){
   $content = Get-Content $textfile
-
-  Write-Host "Das ist der aktuelle inhalt: $content"
   $counter = 0
   $keywordcomplete = ""
+
+  # Loope über alle Elemente -> wenn Match, dann mach das aktuelle Match leer und fülle es auf mit dem eingegeben Array
   foreach ($string in $content) {
-
     if ($string -like "*$keyword*") {
-      if ($bc) {
-        #$Global:exclamtionmarks += $textfile
-      }
-
+      # Zwischenspeichern des KeyWords (wird weiter unten wieder eingesetzt)
       $keywordcomplete = $string
-
       $content[$counter] = ""
       for ($i = 0; $i -lt $insert.Count; $i++) {
         $content[$counter] = $content[$counter] + $insert[$i] + "`n"
       }
       if ($bc) {
+        # Momentan nicht in Benutzung afaik!
         $keywordcomplete = $keywordcomplete.Substring(0,$keywordcomplete.Length - 1)
         $keywordcomplete = $keywordcomplete.Substring(0,$keywordcomplete.Length - 1)
         $keywordcomplete = $keywordcomplete + ", -1, -1, -1, 0, true, true, 0, 5);"
         $content[$counter] = $content[$counter] + $keywordcomplete
       }
       else {
+        # Am Ende dann noch den eigentlichen String einfügen, vor dem weitere Zeilen geschrieben werden!
         $content[$counter] = $content[$counter] + $keywordcomplete + "`n"
       }
 
     }
     $counter++
   }
-
-
   $content | Out-File $textfile
-
-
-
 }
 
-function Replace-SetMacroParam(){
-  foreach ($Filename in $State.input) {
-    $Filename = $Filename.CamPath
-    $charCount = ($Filename.ToCharArray() | Where-Object {$_ -eq '_'} | Measure-Object).Count
-    if($charCount -gt 3){
 
-      $Filename = Split-Path $Filename -leaf
-      $Elements = $Filename.split('_')
-      
-      $MM = $Elements[3]
+# TODO: foreach ($Filename in $State.input.CamPath)!! über Funktion loopen
+function Replace-SetMacroParam($Filename){
 
-      if($Filename -like "*__*"){
-        $MM = 0
-      }
+  $charCount = ($Filename.ToCharArray() | Where-Object {$_ -eq '_'} | Measure-Object).Count
+  # Wenn mehr als 3 Underscores enthalten sind, dann wird davon ausgegangen, dass ein Wert über den Dateinamen übergeben wurde
+  if($charCount -gt 3){
+    # Dateiname erhalten und mittels Underscore in Array exploden
+    $Filename = Split-Path $Filename -leaf
+    $Elements = $Filename.split('_')
 
-      $content = Get-Content $Filename
-      $output = @()
-      foreach ($string in $content) {
-        $output += $string
-        if ($string -like "*SetMacroParam*Angle*") {
-          $output += 'SetMacroParam("Depth", ' + $MM + ');'
-        }
+    # Millimeter aus Dateinamen extrahieren
+    $MM = $Elements[3]
 
-      }
-
-      Set-Content -Path $Filename -Value $output
-      
+    # Bei Doppel-Underscore (-> kein Wert übergeben)
+    if($Filename -like "*__*"){
+      $MM = 0
     }
+
+    # Aktuellen Content im Zwischenspeicher ersetzen (mit MilliMeter befüllen)
+    $content = Get-Content $Filename
+    $output = @()
+    foreach ($string in $content) {
+      $output += $string
+      if ($string -like "*SetMacroParam*Angle*") {
+        $output += 'SetMacroParam("Depth", ' + $MM + ');'
+      }
+
+    }
+
+    # Änderungen auf Platte schreiben
+    Set-Content -Path $Filename -Value $output
+    
   }
+  
 }
 
 # Aktuell nicht in Verwendung:
@@ -112,33 +99,32 @@ function Set-Exlamationmarks {
 
 
 # Sorgt dafür, dass bei einer zweiten Datei das CreateRawWorkPiece genullt wird
-function Correct-Offset_2 {
-  foreach ($file2 in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
-    Write-Host "diese Datei wird nun von Correct-Function gecheckt: $file2" -ForegroundColor Green
-    $count = 0
-    Write-Host "HIER STEHT FILE2: $file2" -ForegroundColor Red
-    $content = Get-Content $file2
-    foreach ($line in $content) {
-      if ($line -like "*CreateRawWorkpiece*") {
-        $newstring = ($content[$count]) -replace ".{43}$"
-        $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
-        $content[$count] = $newstring
-      }
-      if ($line -like "*SetWorkpieceSetupPosition*") {
-        $newstring = ($content[$count]) -replace ".{26}$"
-        $newstring = $newstring + "0.0000, 0.0000, 0.0, 0.0);"
-        $content[$count] = $newstring
-      }
-      $count++
+# TODO: foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
+
+function Correct-Offset_2($Filenme) {
+  $count = 0
+  $content = Get-Content $Filenme
+  foreach ($line in $content) {
+    # CreateRawWorkpiece ersetzen
+    if ($line -like "*CreateRawWorkpiece*") {
+      $newstring = ($content[$count]) -replace ".{43}$"
+      $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
+      $content[$count] = $newstring
     }
-
-    $content | Out-File $file2
-
+    # SetWorkpieceSetupPosition ersetzen
+    if ($line -like "*SetWorkpieceSetupPosition*") {
+      $newstring = ($content[$count]) -replace ".{26}$"
+      $newstring = $newstring + "0.0000, 0.0000, 0.0, 0.0);"
+      $content[$count] = $newstring
+    }
+    $count++
   }
+  # Änxerungen auf Platte schreiben
+  $content | Out-File $Filenme
+
+  
 
 }
-
-
 
 # Öffnet das Verzeichnis, in welchem die Daten gespeichert werden
 function Open-Dir {
@@ -193,7 +179,7 @@ function First-Replace {
 }
 
 # Interaktion mit nativer CNC-Software (X200)
-
+# TODO: Nur X200-Files übergeben
 function convert-xcs-to-pgmx_x200 {
 
   #XConverter Maestro 64 Bit
@@ -201,30 +187,20 @@ function convert-xcs-to-pgmx_x200 {
   #Maschineneinstellung X200
   $X200 = "C:\Users\Public\Documents\SCM Group\Maestro\Environments\X200"
 
-
-  Write-Host "!!!!! TMPFiles2: $State.tmpFiles2" -ForegroundColor Green
-  Write-Output 'GS Ravensburg CAM-Export' $State.Infiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $State.outFiles
   # Konvertieren in tmp pgmx
-  Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
-  Write-Host $State.Infiles -ForegroundColor RED
-  Write-Host "INFILES: $State.Infiles" -ForegroundColor Green
-  & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -env $X200 -o $State.tmpFiles | Out-Default
-  $g = (Get-ChildItem -Path $State.WorkingDir).Name
-  Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
+  & $State.XConverter -ow -s -report -m 0 -i $State.X200Infiles -env $X200 -o $State.X200tmpFiles | Out-Default
+
   # Bearbeitungen optimieren
-  Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
-  & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -env $X200 -o $State.tmpFiles2 | Out-Default
-  $g = (Get-ChildItem -Path $State.WorkingDir).Name
-  Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
+  & $State.XConverter -ow -s -m 2 -i $State.X200tmpFiles -env $X200 -o $State.X200tmpFiles2 | Out-Default
 
   # Sauger positionieren
-  & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -env $X200 -o $State.outFiles | Out-Default
+  & $State.XConverter -ow -s -m 13 -i $State.X200tmpFiles2 -env $X200 -o $State.X200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-  Remove-Item $State.tmpFiles
+  Remove-Item $State.X200tmpFiles
 
   # Loesche die temporaeren Dateien
-  Remove-Item $State.tmpFiles2
+  Remove-Item $State.X200tmpFiles2
 }
 
 # Interaktion mit nativer CNC-Software (M200)
@@ -236,29 +212,19 @@ function convert-xcs-to-pgmx_m200 {
   #Maschineneinstellung M200
   $M200 = "C:\Users\Public\Documents\SCM Group\Maestro\Environments\M200"
 
-  Write-Host "!!!!! TMPFiles2: $State.tmpFiles2" -ForegroundColor Green
-  Write-Output 'GS Ravensburg CAM-Export' $State.Infiles 'Umwandlung von .xcs- in .pgmx-Dateien inklusive Saugerpositionierung und Optimierung' $State.outFiles
+
   # Konvertieren in tmp pgmx
-  Write-Host "JETZT WERDEN INFILES IN TEMP KONVERTIERT!!!!" -ForegroundColor Green
-  Write-Host $State.Infiles -ForegroundColor RED
-  Write-Host "INFILES: $State.Infiles" -ForegroundColor Green
-  & $State.XConverter -ow -s -report -m 0 -i $State.Infiles -env $M200 -o $State.tmpFiles | Out-Default
-  $g = (Get-ChildItem -Path $State.WorkingDir).Name
-  Write-Host "Das ist der Ordnerinhalt nach der Konvertierung: $g"
+  & $State.XConverter -ow -s -report -m 0 -i $State.M200Infiles -env $M200 -o $State.M200tmpFiles | Out-Default
   # Bearbeitungen optimieren
-  Write-Host "JETZT WERDEN FILES OPTIMIERT!!!!" -ForegroundColor Green
-  & $State.XConverter -ow -s -m 2 -i $State.tmpFiles -env $M200 -o $State.tmpFiles2 | Out-Default
-  $g = (Get-ChildItem -Path $State.WorkingDir).Name
-  Write-Host "Das ist der Ordnerinhalt nach der Optimierung: $g"
-
+  & $State.XConverter -ow -s -m 2 -i $State.M200tmpFiles -env $M200 -o $State.M200tmpFiles2 | Out-Default
   # Sauger positionieren
-  & $State.XConverter -ow -s -m 13 -i $State.tmpFiles2 -env $M200 -o $State.outFiles | Out-Default
+  & $State.XConverter -ow -s -m 13 -i $State.M200tmpFiles2 -env $M200 -o $State.M200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-  Remove-Item $State.tmpFiles
+  Remove-Item $State.M200tmpFiles
 
   # Loesche die temporaeren Dateien
-  Remove-Item $State.tmpFiles2
+  Remove-Item $State.M200tmpFiles2
 }
 
 #############################################################################################################################################################################################################
@@ -374,23 +340,37 @@ $DataObject = ConvertFrom-Json @"
     "Program" : null,
     "XConverter" : null,
     "Infiles" : null,
+    "M200Infiles" : null,
+    "X200Infiles" : null,
     "tmpFiles" : null,
+    "M200tmpFiles" : null,
+    "X200tmpFiles" : null,
     "tmpFiles2" : null,
+    "M200tmpFiles2" : null,
+    "X200tmpFiles2" : null,
     "outFiles" : null,
+    "M200outFiles" : null,
+    "X200outFiles" : null,
     "Tooling" : null,
     "WorkingDir" : null,
     "WorkingDirTemp" : null,
-    "input" : null
+    "input" : null,
+    "x200cb" : null,
+    "m200cb" : null
     
 }
 
 "@
 
 $DataContext = New-Object System.Collections.ObjectModel.ObservableCollection[Object]
-FillDataContext @("tabIndex","GlobalError","Systempath","SystemCommand","SystemProfile","Program","XConverter","Infiles","tmpFiles","tmpFiles2","outFiles","Tooling","WorkingDir","WorkingDirTemp","input")
+FillDataContext @("tabIndex","GlobalError","Systempath","SystemCommand","SystemProfile","Program","XConverter","Infiles","tmpFiles","tmpFiles2","outFiles","Tooling","WorkingDir","WorkingDirTemp","input","M200Infiles","X200Infiles","M200tmpFiles","X200tmpFiles","M200tmpFiles2","X200tmpFiles2","M200outFiles","X200outFiles")
 
+# TODO - das hier gerade ziehen!! Binding setzen zsm mit poshgui!
 $Window.DataContext = $DataContext
 Set-Binding -Target $name -Property $([System.Windows.Controls.TabControl]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
+Set-Binding -Target $name -Property $([System.Windows.Controls.CheckBox]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
+Set-Binding -Target $kzq7u9ozqshc4 -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 2 -Name "checked" 
+Set-Binding -Target $kzq7u9ozqshc4 -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 2 -Name "checked" 
 
 
 
@@ -485,9 +465,21 @@ $State.tmpFiles = @()
 $State.tmpFiles2 = @()
 $State.outFiles = @()
 
+$State.M200Infiles = @()
+$State.M200tmpFiles = @()
+$State.M200tmpFiles2 = @()
+$State.M200outFiles = @()
+
+$State.X200Infiles = @()
+$State.X200tmpFiles = @()
+$State.X200tmpFiles2 = @()
+$State.X200outFiles = @()
+
 $State.WorkingDir
 $State.WorkingDirTemp
 
+
+# Set WorkingDir (Directory where the magic happens)
 if ($input -is [array]) {
   $inputarray = $input[0]
   $raw = [System.IO.DirectoryInfo]$inputarray.CamPath
@@ -497,8 +489,6 @@ else{
   $raw = [System.IO.DirectoryInfo]$input.CamPath
   $State.WorkingDir = $raw.Parent.FullName
 }
-
-
 
 
 # M200-spezifische Änderungen

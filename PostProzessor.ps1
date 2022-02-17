@@ -494,6 +494,11 @@ else{
 # M200-spezifische Änderungen
 function Run-M200 () {
   Async {
+
+    if ($State.x200cb){
+      # TODO mache für alles mit _2 die X200-Prozedur und Adde die in die entsprechenden StateVars!
+    } 
+
     $path = $State.WorkingDir + "\exportbericht.txt"
     Start-Transcript -Path $path
 

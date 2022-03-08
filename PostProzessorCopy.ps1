@@ -17,7 +17,7 @@ $Xaml = @"
           <Image HorizontalAlignment="Left" Height="171" VerticalAlignment="Top" Width="313" Margin="395,210,0,0" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\m200.png" Name="m200"/>
           <Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon1" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\icon.png"/>
           <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Gewerbliche Schule Ravensburg" Margin="387,414,0,0" Name="IconText1" FontFamily="Yu Gothic UI Bold *" FontSize="021" FontWeight="DemiBold"/>
-          <CheckBox HorizontalAlignment="Left" Name="m200cb" VerticalAlignment="Top" Content="Run M200 for _2" Margin="38,143,0,0" IsChecked="{Binding m200cb}"/>
+          <CheckBox HorizontalAlignment="Left" Name="m200cb" VerticalAlignment="Top" Content="Run M200 for _2" Margin="38,143,0,0" IsChecked="False"/>
           <CheckBox HorizontalAlignment="Left" Name="x200cb" VerticalAlignment="Top" Content="Run X200 for _2" Margin="40,325,0,0" IsChecked="{Binding x200cb}"/>
         </Grid>
       </TabItem>
@@ -139,8 +139,8 @@ FillDataContext @("tabIndex","GlobalError","Systempath","SystemCommand","SystemP
 # TODO - das hier gerade ziehen!! Binding setzen zsm mit poshgui!
 $Window.DataContext = $DataContext
 Set-Binding -Target $name -Property $([System.Windows.Controls.TabControl]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
-Set-Binding -Target $m200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 1 -Name "m200cb" 
-Set-Binding -Target $x200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 2 -Name "x200cb" 
+Set-Binding -Target $m200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 23 -Name "m200cb" 
+Set-Binding -Target $x200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 24 -Name "x200cb" 
 
 
 

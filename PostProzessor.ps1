@@ -45,7 +45,7 @@ function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, 
 }
 
 
-# TODO: foreach ($Filename in $State.input.CamPath)!! über Funktion loopen
+# ImplementedButNotCheckedYet: TODO: foreach ($Filename in $State.input.CamPath)!! über Funktion loopen
 function Replace-SetMacroParam($Filename){
 
   $charCount = ($Filename.ToCharArray() | Where-Object {$_ -eq '_'} | Measure-Object).Count
@@ -99,7 +99,7 @@ function Set-Exlamationmarks {
 
 
 # Sorgt dafür, dass bei einer zweiten Datei das CreateRawWorkPiece genullt wird
-# TODO: foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
+# ImplementedButNotCheckedYet: TODO: foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
 
 function Correct-Offset_2($Filenme) {
   $count = 0
@@ -365,11 +365,11 @@ $DataObject = ConvertFrom-Json @"
 $DataContext = New-Object System.Collections.ObjectModel.ObservableCollection[Object]
 FillDataContext @("tabIndex","GlobalError","Systempath","SystemCommand","SystemProfile","Program","XConverter","Infiles","tmpFiles","tmpFiles2","outFiles","Tooling","WorkingDir","WorkingDirTemp","input","M200Infiles","X200Infiles","M200tmpFiles","X200tmpFiles","M200tmpFiles2","X200tmpFiles2","M200outFiles","X200outFiles")
 
-# TODO - das hier gerade ziehen!! Binding setzen zsm mit poshgui!
+
 $Window.DataContext = $DataContext
 Set-Binding -Target $name -Property $([System.Windows.Controls.TabControl]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
-Set-Binding -Target $m200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 1 -Name "m200cb" 
-Set-Binding -Target $x200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 2 -Name "x200cb" 
+Set-Binding -Target $m200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 23 -Name "m200cb" 
+Set-Binding -Target $x200cb -Property $([System.Windows.Controls.CheckBox]::IsCheckedProperty) -Index 24 -Name "x200cb" 
 
 
 
@@ -506,7 +506,10 @@ function Run-M200 () {
 
     $State.tabIndex = 1
     First-Replace
-    Replace-SetMacroParam
+    foreach ($Filename in $State.input.CamPath){
+      Replace-SetMacroParam($Filename)
+    }
+    
 
     Foreach ($Prog in $State.input){
       # Approach- und RetractStrategie ersetzen
@@ -544,7 +547,9 @@ function Run-M200 () {
     
 
     try {
-      Correct-Offset_2
+      foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
+        Correct-Offset_2($Filename)
+      }
     }
     catch {}
 
@@ -653,11 +658,15 @@ function Run-X200 () {
     $State.tabIndex = 1
 
     First-Replace
-    Replace-SetMacroParam
+    foreach ($Filename in $State.input.CamPath){
+      Replace-SetMacroParam($Filename)
+    }
 
 
     try {
-      Correct-Offset_2 
+      foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
+        Correct-Offset_2($Filename)
+      }
     }
     catch {
     }

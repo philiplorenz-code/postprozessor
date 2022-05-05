@@ -1,13 +1,13 @@
 ﻿**********************
 Windows PowerShell transcript start
-Start time: 20220505125546
+Start time: 20220505162716
 Username: LIT\Administrator
 RunAs User: LIT\Administrator
 Configuration Name: 
 Machine: WINSER02 (Microsoft Windows NT 10.0.17763.0)
 Host Application: C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Import-Module 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.0\modules\PowerShellEditorServices\PowerShellEditorServices.psd1'; Start-EditorServices -HostName 'Visual Studio Code Host' -HostProfileId 'Microsoft.VSCode' -HostVersion '2022.5.0' -AdditionalModules @('PowerShellEditorServices.VSCode') -BundledModulesPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.0\modules' -EnableConsoleRepl -StartupBanner '=====> PowerShell Integrated Console v2022.5.0 <=====
-' -LogLevel 'Normal' -LogPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.0\logs\1651748049-0c68b4f0-39c3-4aeb-b139-4a28f024d3781651748047319\EditorServices.log' -SessionDetailsPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.0\sessions\PSES-VSCode-4392-327206' -FeatureFlags @() 
-Process ID: 8928
+' -LogLevel 'Normal' -LogPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.0\logs\1651760803-4ee514a7-f59b-4a30-82f8-0f2aa61b92d61651760801281\EditorServices.log' -SessionDetailsPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.0\sessions\PSES-VSCode-4616-772914' -FeatureFlags @() 
+Process ID: 4256
 PSVersion: 5.1.17763.592
 PSEdition: Desktop
 PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.17763.592
@@ -20,15 +20,7 @@ SerializationVersion: 1.1.0.1
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Global"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Global"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Script"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Script"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Local"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Local"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Local"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
@@ -36,15 +28,7 @@ PS>CommandInvocation(Get-Variable): "Get-Variable"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Global"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Global"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Script"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Script"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Local"
-PS>CommandInvocation(Get-Variable): "Get-Variable"
->> ParameterBinding(Get-Variable): name="Scope"; value="Local"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Local"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
@@ -52,22 +36,151 @@ PS>CommandInvocation(Get-Variable): "Get-Variable"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Global"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Script"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Local"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Local"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Global"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Script"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Local"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Local"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Global"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Script"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Local"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Local"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Global"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
+>> ParameterBinding(Get-Variable): name="Scope"; value="Script"
+PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Local"
 PS>CommandInvocation(Get-Variable): "Get-Variable"
 >> ParameterBinding(Get-Variable): name="Scope"; value="Local"
+PS>CommandInvocation(Import-Module): "Import-Module"
+>> ParameterBinding(Import-Module): name="PassThru"; value="True"
+>> ParameterBinding(Import-Module): name="Name"; value="C:\Program Files\DesiredStateConfiguration\1.0.0.0\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psd1"
+Import-Module : The specified module 'C:\Program 
+Files\DesiredStateConfiguration\1.0.0.0\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psd1' was not 
+loaded because no valid module file was found in any module directory.
+    + CategoryInfo          : ResourceUnavailable: (C:\Program File...figuration.psd1:String) [Import-Module], 
+FileNotFoundException
+    + FullyQualifiedErrorId : Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand
+ 
+CommandInvocation(Get-PSBreakpoint): "Get-PSBreakpoint"
+>> ParameterBinding(Get-PSBreakpoint): name="Script"; value="c:\Code\postprozessor\postproz_neu_json_import.ps1"
+>> CommandInvocation(Remove-PSBreakpoint): "Remove-PSBreakpoint"
+>> ParameterBinding(Remove-PSBreakpoint): name="Breakpoint"; value="Line breakpoint on 'C:\Code\postprozessor\postproz_neu_json_import.ps1:51'"
+>> ParameterBinding(Remove-PSBreakpoint): name="Breakpoint"; value="Line breakpoint on 'C:\Code\postprozessor\postproz_neu_json_import.ps1:52'"
+>> ParameterBinding(Remove-PSBreakpoint): name="Breakpoint"; value="Line breakpoint on 'C:\Code\postprozessor\postproz_neu_json_import.ps1:67'"
+>> ParameterBinding(Remove-PSBreakpoint): name="Breakpoint"; value="Line breakpoint on 'C:\Code\postprozessor\postproz_neu_json_import.ps1:178'"
+>> ParameterBinding(Remove-PSBreakpoint): name="Breakpoint"; value="Line breakpoint on 'C:\Code\postprozessor\postproz_neu_json_import.ps1:645'"
+>> ParameterBinding(Remove-PSBreakpoint): name="Breakpoint"; value="Line breakpoint on 'C:\Code\postprozessor\postproz_neu_json_import.ps1:685'"
+Import-Module : The specified module 'C:\Program 
+Files\DesiredStateConfiguration\1.0.0.0\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psd1' was not 
+loaded because no valid module file was found in any module directory.
+    + CategoryInfo          : ResourceUnavailable: (C:\Program File...figuration.psd1:String) [Import-Module], 
+FileNotFoundException
+    + FullyQualifiedErrorId : Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand
+ 
+CommandInvocation(Get-PSBreakpoint): "Get-PSBreakpoint"
 diese Datei wird nun von Correct-Function gecheckt: C:\Code\postprozessor\Testing\Druecken auf M200\01_vorher\1_SeiteL_Lichtgr_6.535_T01_2.xcs
 HIER STEHT FILE2: C:\Code\postprozessor\Testing\Druecken auf M200\01_vorher\1_SeiteL_Lichtgr_6.535_T01_2.xcs
+& : The term 'C:\Program Files\SCM Group\Maestro\XConverter.exe' is not recognized as the name of a cmdlet, function, 
+script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is 
+correct and try again.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:221 char:5
++   & $State.XConverter -ow -s -report -m 0 -i $State.M200Infiles -env  ...
++     ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Program File...\XConverter.exe:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+& : The term 'C:\Program Files\SCM Group\Maestro\XConverter.exe' is not recognized as the name of a
+cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was
+included, verify that the path is correct and try again.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:221 char:5
++   & $State.XConverter -ow -s -report -m 0 -i $State.M200Infiles -env  ...
++     ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Program File...\XConverter.exe:String) [], CommandNotFou
+   ndException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+& : The term 'C:\Program Files\SCM Group\Maestro\XConverter.exe' is not recognized as the name of a cmdlet, function, 
+script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is 
+correct and try again.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:223 char:5
++   & $State.XConverter -ow -s -m 2 -i $State.M200tmpFiles -env $M200 - ...
++     ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Program File...\XConverter.exe:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+& : The term 'C:\Program Files\SCM Group\Maestro\XConverter.exe' is not recognized as the name of a
+cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was
+included, verify that the path is correct and try again.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:223 char:5
++   & $State.XConverter -ow -s -m 2 -i $State.M200tmpFiles -env $M200 - ...
++     ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Program File...\XConverter.exe:String) [], CommandNotFou
+   ndException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+& : The term 'C:\Program Files\SCM Group\Maestro\XConverter.exe' is not recognized as the name of a cmdlet, function, 
+script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is 
+correct and try again.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:225 char:5
++   & $State.XConverter -ow -s -m 13 -i $State.M200tmpFiles2 -env $M200 ...
++     ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Program File...\XConverter.exe:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+& : The term 'C:\Program Files\SCM Group\Maestro\XConverter.exe' is not recognized as the name of a
+cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was
+included, verify that the path is correct and try again.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:225 char:5
++   & $State.XConverter -ow -s -m 13 -i $State.M200tmpFiles2 -env $M200 ...
++     ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Program File...\XConverter.exe:String) [], CommandNotFou
+   ndException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+>> TerminatingError(Remove-Item): "Cannot bind argument to parameter 'Path' because it is null."
+Remove-Item : Cannot bind argument to parameter 'Path' because it is null.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:228 char:15
++   Remove-Item $State.M200tmpFiles
++               ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Remove-Item], ParameterBindingValidationException
+    + FullyQualifiedErrorId : 
+ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : Cannot bind argument to parameter 'Path' because it is null.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:228 char:15
++   Remove-Item $State.M200tmpFiles
++               ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Remove-Item], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands
+   .RemoveItemCommand
+
+>> TerminatingError(Remove-Item): "Cannot bind argument to parameter 'Path' because it is null."
+Remove-Item : Cannot bind argument to parameter 'Path' because it is null.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:231 char:15
++   Remove-Item $State.M200tmpFiles2
++               ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Remove-Item], ParameterBindingValidationException
+    + FullyQualifiedErrorId : 
+ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : Cannot bind argument to parameter 'Path' because it is null.
+At C:\Code\postprozessor\postproz_neu_json_import.ps1:231 char:15
++   Remove-Item $State.M200tmpFiles2
++               ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Remove-Item], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands
+   .RemoveItemCommand
+
 **********************
 Windows PowerShell transcript end
-End time: 20220505125554
+End time: 20220505162744
 **********************

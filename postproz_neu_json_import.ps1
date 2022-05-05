@@ -49,6 +49,7 @@ function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, 
 # ImplementedButNotCheckedYet: TODO: foreach ($Filename in $State.input.CamPath)!! über Funktion loopen
 function Replace-SetMacroParam(){
   foreach ($Filename in $State.input) {
+    $FilePath = $Filename.CamPath
     $Filename = $Filename.CamPath
     $charCount = ($Filename.ToCharArray() | Where-Object {$_ -eq '_'} | Measure-Object).Count
     if($charCount -gt 3){
@@ -62,7 +63,9 @@ function Replace-SetMacroParam(){
         $MM = 0
       }
 
-      $content = Get-Content $State.input.CamPath
+
+      $content = Get-Content $FilePath
+      
       $output = @()
       foreach ($string in $content) {
         $output += $string
@@ -547,9 +550,9 @@ function Run-M200 () {
 
     First-Replace -State $State
 
-    foreach ($Filename in $State.input.CamPath) {
-      Replace-SetMacroParam($Filename)
-    }
+    #foreach ($Filename in $State.input.CamPath) {
+    Replace-SetMacroParam
+    #}
 
     if ($int -eq 1) {
       Foreach ($Prog in $State.input) {
@@ -648,8 +651,9 @@ function Run-M200 () {
         return $newobj
     }
 
-    $State1 = clone($State)
-    $State1.input = $State.input | Where-Object { $_.CamName -like "*_1.xcs" }
+      $State1 = clone($State)
+      $State1.input = $State.input | Where-Object { $_.CamName -like "*_1.xcs" }
+
 
     $State2 = clone($State)
     $State2.input = $State.input | Where-Object { $_.CamName -like "*_2.xcs" }
@@ -669,7 +673,7 @@ function Run-M200 () {
     }
 
   } 
-  <# 
+ 
     $path = $State.WorkingDir + "\exportbericht.txt"
     Start-Transcript -Path $path
    
@@ -677,10 +681,8 @@ function Run-M200 () {
     $count = 0
 
     $State.tabIndex = 1
-    First-Replace
-    foreach ($Filename in $State.input.CamPath){
-      Replace-SetMacroParam($Filename)
-    }
+    First-Replace -State $State
+    Replace-SetMacroParam
     
 
     Foreach ($Prog in $State.input){
@@ -771,8 +773,6 @@ function Run-M200 () {
       Stop-Process -Name *powershell*
       Stop-Transcript
     }
-  #>
-  #} 
 
 
 }
@@ -830,9 +830,9 @@ function Run-X200 () {
     $State.tabIndex = 1
 
     First-Replace
-    foreach ($Filename in $State.input.CamPath) {
-      Replace-SetMacroParam($Filename)
-    }
+    #foreach ($Filename in $State.input.CamPath) {
+    Replace-SetMacroParam
+    #}
 
 
     try {

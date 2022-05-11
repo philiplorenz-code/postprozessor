@@ -75,7 +75,7 @@ function Replace-SetMacroParam(){
 
       }
 
-      Set-Content -Path $State.input.CamPath -Value $output
+      Set-Content -Path $FilePath -Value $output
       
     }
   }
@@ -492,7 +492,6 @@ else {
 function Run-M200 () {
   # HINWEIS: Hier muss man auf m200cb verweisen, da das die Checkbox unter dem M220-Button ist!
   #Async {
-  $State.m200cb | Set-Content "./test.txt"
 
   function Run-Modification {
     param (

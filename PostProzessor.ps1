@@ -1,9 +1,9 @@
 [CmdletBinding()]
 param(
-  $SystemPath,# the value can be set in PYTHA Interface Setup
-  $SystemCommand,# the value can be set in PYTHA Interface Setup
-  $SystemProfile,# the value can be set in PYTHA Interface Setup
-  [Parameter(Mandatory = $true,ValueFromPipeline = $true)] $Program
+  $SystemPath, # the value can be set in PYTHA Interface Setup
+  $SystemCommand, # the value can be set in PYTHA Interface Setup
+  $SystemProfile, # the value can be set in PYTHA Interface Setup
+  [Parameter(Mandatory = $true, ValueFromPipeline = $true)] $Program
 )
 #-------------------------------------------------------------#
 #----Initial Declarations-------------------------------------#
@@ -43,8 +43,8 @@ function Add-StringBefore {
         $content[$counter] = $content[$counter] + $insert[$i] + "`n"
       }
       if ($bc) {
-        $keywordcomplete = $keywordcomplete.Substring(0,$keywordcomplete.Length - 1)
-        $keywordcomplete = $keywordcomplete.Substring(0,$keywordcomplete.Length - 1)
+        $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
+        $keywordcomplete = $keywordcomplete.Substring(0, $keywordcomplete.Length - 1)
         $keywordcomplete = $keywordcomplete + ", -1, -1, -1, 0, true, true, 0, 5);"
         $content[$counter] = $content[$counter] + $keywordcomplete
       }
@@ -63,18 +63,18 @@ function Add-StringBefore {
 
 }
 
-function Replace-SetMacroParam(){
+function Replace-SetMacroParam() {
   foreach ($Filename in $State.input) {
     $Filename = $Filename.CamPath
-    $charCount = ($Filename.ToCharArray() | Where-Object {$_ -eq '_'} | Measure-Object).Count
-    if($charCount -gt 3){
+    $charCount = ($Filename.ToCharArray() | Where-Object { $_ -eq '_' } | Measure-Object).Count
+    if ($charCount -gt 3) {
 
       $Filename = Split-Path $Filename -leaf
       $Elements = $Filename.split('_')
       
       $MM = $Elements[3]
 
-      if($Filename -like "*__*"){
+      if ($Filename -like "*__*") {
         $MM = 0
       }
 
@@ -101,7 +101,7 @@ function Set-Exlamationmarks {
   )
   $files = $files | Select-Object -Unique
   foreach ($textfile in $files) {
-    $textfile = $textfile.Replace("xcs","pgmx")
+    $textfile = $textfile.Replace("xcs", "pgmx")
     $dir = (Get-Item $textfile).Directory.FullName
     $filename = "!!!" + ((Get-Item $textfile).Name)
     $newsave = $dir + "\" + $filename
@@ -152,12 +152,12 @@ function First-Replace {
     (Get-Content $Prog.CamPath) | ForEach-Object {
 
       # Hier können Textersetzungen angegeben werden, welche dann in der xcs- bzw. pgmx-Datei wirksam werden
-      $_.Replace("SlantedBladeCut","Saegeschnitt_").
-      Replace("Routing_","Fraesen_").
-      Replace("VerticalDrilling","Vertikale Bohrung").
-      Replace("HorizontalDrilling","Horizontale Bohrung").
-      Replace("PYTHA_INIT_","Blindes Makro_").
-      Replace("PYTHA_PARK_","Wegfahrschritt_")
+      $_.Replace("SlantedBladeCut", "Saegeschnitt_").
+      Replace("Routing_", "Fraesen_").
+      Replace("VerticalDrilling", "Vertikale Bohrung").
+      Replace("HorizontalDrilling", "Horizontale Bohrung").
+      Replace("PYTHA_INIT_", "Blindes Makro_").
+      Replace("PYTHA_PARK_", "Wegfahrschritt_")
 
     } | Set-Content $Prog.CamPath
 
@@ -265,7 +265,7 @@ function convert-xcs-to-pgmx_m200 {
 # Beginn GUI Zeug
 #############################################################################################################################################################################################################
 
-Add-Type -AssemblyName PresentationCore,PresentationFramework
+Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $Xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="800" Height="550" Topmost="True">
@@ -336,7 +336,7 @@ $State = [pscustomobject]@{}
 
 
 function Set-Binding {
-  param($Target,$Property,$Index,$Name)
+  param($Target, $Property, $Index, $Name)
 
   $Binding = New-Object System.Windows.Data.Binding
   $Binding.Path = "[" + $Index + "]"
@@ -344,7 +344,7 @@ function Set-Binding {
 
 
 
-  [void]$Target.SetBinding($Property,$Binding)
+  [void]$Target.SetBinding($Property, $Binding)
 }
 
 function FillDataContext ($props) {
@@ -387,7 +387,7 @@ $DataObject = ConvertFrom-Json @"
 "@
 
 $DataContext = New-Object System.Collections.ObjectModel.ObservableCollection[Object]
-FillDataContext @("tabIndex","GlobalError","Systempath","SystemCommand","SystemProfile","Program","XConverter","Infiles","tmpFiles","tmpFiles2","outFiles","Tooling","WorkingDir","WorkingDirTemp","input")
+FillDataContext @("tabIndex", "GlobalError", "Systempath", "SystemCommand", "SystemProfile", "Program", "XConverter", "Infiles", "tmpFiles", "tmpFiles2", "outFiles", "Tooling", "WorkingDir", "WorkingDirTemp", "input")
 
 $Window.DataContext = $DataContext
 Set-Binding -Target $name -Property $([System.Windows.Controls.TabControl]::SelectedIndexProperty) -Index 0 -Name "tabIndex"
@@ -401,17 +401,16 @@ $SyncHash.Window = $Window
 $Jobs = [System.Collections.ArrayList]::Synchronized([System.Collections.ArrayList]::new())
 $initialSessionState = [initialsessionstate]::CreateDefault()
 
-function Start-RunspaceTask
-{
+function Start-RunspaceTask {
   [CmdletBinding()]
-  param([Parameter(Mandatory = $True,Position = 0)] [scriptblock]$ScriptBlock,
-    [Parameter(Mandatory = $True,Position = 1)] [PSObject[]]$ProxyVars)
+  param([Parameter(Mandatory = $True, Position = 0)] [scriptblock]$ScriptBlock,
+    [Parameter(Mandatory = $True, Position = 1)] [PSObject[]]$ProxyVars)
 
   $Runspace = [runspacefactory]::CreateRunspace($InitialSessionState)
   $Runspace.ApartmentState = 'STA'
   $Runspace.ThreadOptions = 'ReuseThread'
   $Runspace.Open()
-  foreach ($Var in $ProxyVars) { $Runspace.SessionStateProxy.SetVariable($Var.Name,$Var.Variable) }
+  foreach ($Var in $ProxyVars) { $Runspace.SessionStateProxy.SetVariable($Var.Name, $Var.Variable) }
   $Thread = [powershell]::Create('NewRunspace')
   $Thread.AddScript($ScriptBlock) | Out-Null
   $Thread.Runspace = $Runspace
@@ -419,12 +418,9 @@ function Start-RunspaceTask
 }
 
 $JobCleanupScript = {
-  do
-  {
-    foreach ($Job in $Jobs)
-    {
-      if ($Job.Runspace.IsCompleted)
-      {
+  do {
+    foreach ($Job in $Jobs) {
+      if ($Job.Runspace.IsCompleted) {
         [void]$Job.PowerShell.EndInvoke($Job.Runspace)
         $Job.PowerShell.Runspace.Close()
         $Job.PowerShell.Runspace.Dispose()
@@ -442,7 +438,7 @@ $JobCleanupScript = {
 Get-ChildItem Function: | Where-Object { $_.Name -notlike "*:*" } | Select-Object name -ExpandProperty name |
 ForEach-Object {
   $Definition = Get-Content "function:$_" -ErrorAction Stop
-  $SessionStateFunction = New-Object System.Management.Automation.Runspaces.SessionStateFunctionEntry -ArgumentList "$_",$Definition
+  $SessionStateFunction = New-Object System.Management.Automation.Runspaces.SessionStateFunctionEntry -ArgumentList "$_", $Definition
   $InitialSessionState.Commands.Add($SessionStateFunction)
 }
 
@@ -453,7 +449,7 @@ $Window.Add_Closed({
   })
 
 $SyncHash.CleanupJobs = $True
-function Async ($scriptBlock) { Start-RunspaceTask $scriptBlock @([psobject]@{ Name = 'DataContext'; Variable = $DataContext },[psobject]@{ Name = "State"; Variable = $State },[psobject]@{ Name = "SyncHash"; Variable = $SyncHash }) }
+function Async ($scriptBlock) { Start-RunspaceTask $scriptBlock @([psobject]@{ Name = 'DataContext'; Variable = $DataContext }, [psobject]@{ Name = "State"; Variable = $State }, [psobject]@{ Name = "SyncHash"; Variable = $SyncHash }) }
 
 Start-RunspaceTask $JobCleanupScript @([psobject]@{ Name = 'Jobs'; Variable = $Jobs })
 
@@ -470,7 +466,7 @@ Add-Type -Name Window -Namespace Console -MemberDefinition '
 public static extern IntPtr GetConsoleWindow();
 [DllImport("user32.dll")]
 public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
-[Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(),0)
+[Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(), 0)
 
 # State-Variables: Programm ist multithreaded - diese Variablen sind aus jedem Thread heraus lesend/schreibend zugreifbar
 $State.Systempath = $Systempath
@@ -493,7 +489,7 @@ if ($input -is [array]) {
   $raw = [System.IO.DirectoryInfo]$inputarray.CamPath
   $State.WorkingDir = $raw.Parent.FullName
 }
-else{
+else {
   $raw = [System.IO.DirectoryInfo]$input.CamPath
   $State.WorkingDir = $raw.Parent.FullName
 }
@@ -516,39 +512,39 @@ function Run-M200 () {
     First-Replace
     Replace-SetMacroParam
 
-    Foreach ($Prog in $State.input){
+    Foreach ($Prog in $State.input) {
       # Approach- und RetractStrategie ersetzen
       (Get-Content $Prog.CamPath) | ForEach-Object {
 
         # Im Bogen an- und abfahren mit 5 mm Überlappung für Bauteilumfräsung
-        $_.Replace("SetApproachStrategy(true, false, -1)","SetApproachStrategy(false, true, 2)").
-          Replace("SetRetractStrategy(true, false, -1, 0)","SetRetractStrategy(false, true, 2, 5)")
+        $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+        Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
 
       } | Set-Content $Prog.CamPath
     }
 
     # Edit Set MachineParameters
     # Wenn Array
-    if ($State.input -is [array]){
-      foreach ($one in $State.input){
-          $temppath = $State.WorkingDir + "\temp.xcs"
-          $currentcontent = Get-Content $one.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
-          'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
-          $currentcontent | Add-Content $temppath
-          Get-Content $temppath | Set-Content $one.CamPath
-          Remove-Item $temppath
+    if ($State.input -is [array]) {
+      foreach ($one in $State.input) {
+        $temppath = $State.WorkingDir + "\temp.xcs"
+        $currentcontent = Get-Content $one.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
+        'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+        $currentcontent | Add-Content $temppath
+        Get-Content $temppath | Set-Content $one.CamPath
+        Remove-Item $temppath
       }
   
-      }
-      # Wenn kein Array
-      else {
-          $temppath = $State.WorkingDir + "\temp.xcs"
-          $currentcontent = Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
-          'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
-          $currentcontent | Add-Content $temppath
-          Get-Content $temppath | Set-Content $State.input.CamPath
-          Remove-Item $temppath
-      }
+    }
+    # Wenn kein Array
+    else {
+      $temppath = $State.WorkingDir + "\temp.xcs"
+      $currentcontent = Get-Content $State.input.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
+      'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+      $currentcontent | Add-Content $temppath
+      Get-Content $temppath | Set-Content $State.input.CamPath
+      Remove-Item $temppath
+    }
     
 
     try {
@@ -573,9 +569,9 @@ function Run-M200 () {
 
 
       $xcsPath = $Prog.CamPath
-      $pgmxPath = $xcsPath -replace '.xcs$','.pgmx'
-      $tmpPath = $xcsPath -replace '.xcs$','__tmp.pgmx'
-      $tmpPath2 = $xcsPath -replace '.xcs$','__tmp2.pgmx'
+      $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+      $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+      $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
 
 
       $count += 1
@@ -612,47 +608,48 @@ function Run-M200 () {
 # X200-spezifische Änderungen
 function Run-X200 () {
   Async {
+    $State.tabIndex = 1
 
     $path = $State.WorkingDir + "\exportbericht.txt"
     Start-Transcript -Path $path
 
 
     # Clear CreateRawWorkpiece 
-    if ($State.input -is [array]){
-      foreach ($one in $State.input){
-          $temppath = $State.WorkingDir + "\temp.xcs"
-          Get-Content $one.CamPath | Where-Object {$_ -notlike 'CreateRawWorkpiece*'} | Set-Content $temppath
-          Get-Content $temppath | Set-Content $one.CamPath
-          Remove-Item $temppath
+    if ($State.input -is [array]) {
+      foreach ($one in $State.input) {
+        $temppath = $State.WorkingDir + "\temp.xcs"
+        Get-Content $one.CamPath | Where-Object { $_ -notlike 'CreateRawWorkpiece*' } | Set-Content $temppath
+        Get-Content $temppath | Set-Content $one.CamPath
+        Remove-Item $temppath
       }
 
     }
     else {
-        $temppath = $State.WorkingDir + "\temp.xcs"
-        Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'CreateRawWorkpiece*'} | Set-Content $temppath
-        Get-Content $temppath | Set-Content $State.input.CamPath
-        Remove-Item $temppath
+      $temppath = $State.WorkingDir + "\temp.xcs"
+      Get-Content $State.input.CamPath | Where-Object { $_ -notlike 'CreateRawWorkpiece*' } | Set-Content $temppath
+      Get-Content $temppath | Set-Content $State.input.CamPath
+      Remove-Item $temppath
     }
 
     # Edit Set MachineParameters
-    if ($State.input -is [array]){
-    foreach ($one in $State.input){
+    if ($State.input -is [array]) {
+      foreach ($one in $State.input) {
         $temppath = $State.WorkingDir + "\temp.xcs"
-        $currentcontent = Get-Content $one.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
+        $currentcontent = Get-Content $one.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
         'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
         $currentcontent | Add-Content $temppath
         Get-Content $temppath | Set-Content $one.CamPath
         Remove-Item $temppath
-    }
+      }
 
     }
     else {
-        $temppath = $State.WorkingDir + "\temp.xcs"
-        $currentcontent = Get-Content $State.input.CamPath | Where-Object {$_ -notlike 'SetMachiningParameters*'}
-        'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
-        $currentcontent | Add-Content $temppath
-        Get-Content $temppath | Set-Content $State.input.CamPath
-        Remove-Item $temppath
+      $temppath = $State.WorkingDir + "\temp.xcs"
+      $currentcontent = Get-Content $State.input.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
+      'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
+      $currentcontent | Add-Content $temppath
+      Get-Content $temppath | Set-Content $State.input.CamPath
+      Remove-Item $temppath
     }
 
     # Global Vars
@@ -688,9 +685,9 @@ function Run-X200 () {
       $Prog.CamPath | Out-String
 
       $xcsPath = $Prog.CamPath
-      $pgmxPath = $xcsPath -replace '.xcs$','.pgmx'
-      $tmpPath = $xcsPath -replace '.xcs$','__tmp.pgmx'
-      $tmpPath2 = $xcsPath -replace '.xcs$','__tmp2.pgmx'
+      $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+      $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+      $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
 
 
 

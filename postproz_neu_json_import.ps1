@@ -661,17 +661,6 @@ function Run-M200 () {
       Run-Modification -State $State1 -int 1
       Run-Modification -State $State2 -int 2
 
-      if ($error.Count -gt 0) {
-        $State.tabIndex = 2
-        Stop-Transcript
-        Open-Dir
-      }
-      else {
-        Open-Dir
-        Stop-Process -Name *powershell*
-        Stop-Transcript
-      }
-
     } 
     elseif (!$State.m200cb) {
       $path = $State.WorkingDir + "\exportbericht.txt"
@@ -779,12 +768,185 @@ function Run-M200 () {
 
 # X200-spezifische Änderungen
 function Run-X200 () {
-  Async {
+  #Async {
 
+  function Run-Modification {
+    param (
+      $State,
+      $int
+    )
+
+    # Logging
+
+    $State.tabIndex = 1
+    if ($int -eq 2) {
+      First-Replace -State $State
+      Replace-SetMacroParam
+
+      Foreach ($Prog in $State.input) {
+        # Approach- und RetractStrategie ersetzen
+            (Get-Content $Prog.CamPath) | ForEach-Object {
+      
+          # Im Bogen an- und abfahren mit 5 mm Überlappung für Bauteilumfräsung
+          $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+          Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+      
+        } | Set-Content $Prog.CamPath
+      }
+      # Edit Set MachineParameters
+      # Wenn Array
+      if ($State.input -is [array]) {
+        foreach ($one in $State.input) {
+          $temppath = $State.WorkingDir + "\temp.xcs"
+          $currentcontent = Get-Content $one.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
+          'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+          $currentcontent | Add-Content $temppath
+          Get-Content $temppath | Set-Content $one.CamPath
+          Remove-Item $temppath
+        }
+        
+      }
+      # Wenn kein Array
+      else {
+        $temppath = $State.WorkingDir + "\temp.xcs"
+        $currentcontent = Get-Content $State.input.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
+        'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+        $currentcontent | Add-Content $temppath
+        Get-Content $temppath | Set-Content $State.input.CamPath
+        Remove-Item $temppath
+      }
+
+      try {
+        foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
+          Correct-Offset_2($Filename)
+        }
+      }
+      catch {}
+
+    }
+
+    # Global Vars
+    $count = 0
+    # Change Screen
+    $State.tabIndex = 1
+
+    First-Replace -State $State
+
+    #foreach ($Filename in $State.input.CamPath) {
+    Replace-SetMacroParam
+    #}
+
+    if ($int -eq 1) {
+      Foreach ($Prog in $State.input) {
+        # Approach- und RetractStrategie ersetzen
+            (Get-Content $Prog.CamPath) | ForEach-Object {
+      
+          # Im Bogen an- und abfahren mit 5 mm Überlappung für Bauteilumfräsung
+          $_.Replace("SetApproachStrategy(true, false, -1)", "SetApproachStrategy(false, true, 2)").
+          Replace("SetRetractStrategy(true, false, -1, 0)", "SetRetractStrategy(false, true, 2, 5)")
+      
+        } | Set-Content $Prog.CamPath
+      }
+      
+      # Edit Set MachineParameters
+      # Wenn Array
+      if ($State.input -is [array]) {
+        foreach ($one in $State.input) {
+          $temppath = $State.WorkingDir + "\temp.xcs"
+          $currentcontent = Get-Content $one.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
+          'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+          $currentcontent | Add-Content $temppath
+          Get-Content $temppath | Set-Content $one.CamPath
+          Remove-Item $temppath
+        }
+        
+      }
+      # Wenn kein Array
+      else {
+        $temppath = $State.WorkingDir + "\temp.xcs"
+        $currentcontent = Get-Content $State.input.CamPath | Where-Object { $_ -notlike 'SetMachiningParameters*' }
+        'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
+        $currentcontent | Add-Content $temppath
+        Get-Content $temppath | Set-Content $State.input.CamPath
+        Remove-Item $temppath
+      }
+    }
+        
+    if ($int -eq 2) {
+      try {
+        foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
+          Correct-Offset_2($Filename)
+        }
+      }
+      catch {}
+    }
+
+
+
+    # CNC-Software nativ
+    foreach ($Prog in $State.input) {
+      if ($count -ge 200) {
+        # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+          
+        convert-xcs-to-pgmx_m200
+          
+        $count = 0
+        $State.Infiles = ""
+        $State.tmpFiles = ""
+        $State.tmpFiles2 = ""
+        $State.outFiles = ""
+      }
+          
+          
+      $xcsPath = $Prog.CamPath
+      $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+      $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+      $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+          
+          
+      $count += 1
+      [array]$State.Infiles += $xcsPath
+      [array]$State.outFiles += $pgmxPath
+      [array]$State.tmpFiles += $tmpPath
+      [array]$State.tmpFiles2 += $tmpPath2
+    }
+    convert-xcs-to-pgmx_m200
+          
+    # Kurz warten
+    Start-Sleep 1
+              
+              
+              
+              
+
+        
+  }
+
+  if ($State.x200cb) {
     $path = $State.WorkingDir + "\exportbericht.txt"
     Start-Transcript -Path $path
+    function clone($obj) {
+      $newobj = New-Object PsObject
+      $obj.psobject.Properties | % { Add-Member -MemberType NoteProperty -InputObject $newobj -Name $_.Name -Value $_.Value }
+      return $newobj
+    }
+
+    $State1 = clone($State)
+    $State1.input = $State.input | Where-Object { $_.CamName -like "*_1.xcs" }
 
 
+    $State2 = clone($State)
+    $State2.input = $State.input | Where-Object { $_.CamName -like "*_2.xcs" }
+
+    Run-Modification -State $State1 -int 1
+    Run-Modification -State $State2 -int 2
+  }
+
+  elseif (!$State.x200cb) {
+    $path = $State.WorkingDir + "\exportbericht.txt"
+    Start-Transcript -Path $path
+  
+  
     # Clear CreateRawWorkpiece 
     if ($State.input -is [array]) {
       foreach ($one in $State.input) {
@@ -793,7 +955,7 @@ function Run-X200 () {
         Get-Content $temppath | Set-Content $one.CamPath
         Remove-Item $temppath
       }
-
+  
     }
     else {
       $temppath = $State.WorkingDir + "\temp.xcs"
@@ -801,7 +963,7 @@ function Run-X200 () {
       Get-Content $temppath | Set-Content $State.input.CamPath
       Remove-Item $temppath
     }
-
+  
     # Edit Set MachineParameters
     if ($State.input -is [array]) {
       foreach ($one in $State.input) {
@@ -812,7 +974,7 @@ function Run-X200 () {
         Get-Content $temppath | Set-Content $one.CamPath
         Remove-Item $temppath
       }
-
+  
     }
     else {
       $temppath = $State.WorkingDir + "\temp.xcs"
@@ -822,18 +984,18 @@ function Run-X200 () {
       Get-Content $temppath | Set-Content $State.input.CamPath
       Remove-Item $temppath
     }
-
+  
     # Global Vars
     $count = 0
-
+  
     $State.tabIndex = 1
-
+  
     First-Replace
     #foreach ($Filename in $State.input.CamPath) {
     Replace-SetMacroParam
     #}
-
-
+  
+  
     try {
       foreach ($Filenme in ((Get-ChildItem $State.WorkingDir | Where-Object { $_.FullName -like "*_2.xcs" } | Select-Object FullName).FullName)) {
         Correct-Offset_2($Filename)
@@ -841,14 +1003,14 @@ function Run-X200 () {
     }
     catch {
     }
-    
+      
     foreach ($Prog in $State.input) {
       if ($count -ge 200) {
         # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
         "Now Convert in if" | Out-File "C:\Users\theo_\Desktop\log.log" -Append
-
+  
         convert-xcs-to-pgmx_x200
-
+  
         $count = 0
         $State.Infiles = ""
         $State.tmpFiles = ""
@@ -858,36 +1020,40 @@ function Run-X200 () {
       Write-Output "Prog.CamPath "
       Write-Host "Prog.CamPath "
       $Prog.CamPath | Out-String
-
+  
       $xcsPath = $Prog.CamPath
       $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
       $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
       $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-
-
-
+  
+  
+  
       $count += 1
       [array]$State.Infiles += $xcsPath
       [array]$State.outFiles += $pgmxPath
       [array]$State.tmpFiles += $tmpPath
       [array]$State.tmpFiles2 += $tmpPath2
     }
-
+  
     convert-xcs-to-pgmx_x200
     Start-Sleep 1
-    if ($error.Count -gt 0) {
-      $State.tabIndex = 2
-      Stop-Transcript
-      Open-Dir
-    }
-    else {
-      Open-Dir
-      Stop-Process -Name *powershell*
-      Stop-Transcript
-    }
-
-
+  
   }
+
+    
+  if ($error.Count -gt 0) {
+    $State.tabIndex = 2
+    Stop-Transcript
+    Open-Dir
+  }
+  else {
+    Open-Dir
+    Stop-Process -Name *powershell*
+    Stop-Transcript
+  }
+
+
+  #}
 }
 
 

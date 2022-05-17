@@ -1,13 +1,22 @@
 ﻿**********************
 Windows PowerShell transcript start
+<<<<<<< HEAD
 Start time: 20220517183148
+=======
+Start time: 20220511201254
+>>>>>>> fa37dd061db4c108f4840c4ace0c6bc68a7d1c91
 Username: LIT\Administrator
 RunAs User: LIT\Administrator
 Configuration Name: 
 Machine: WINSER02 (Microsoft Windows NT 10.0.17763.0)
 Host Application: C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Import-Module 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.1\modules\PowerShellEditorServices\PowerShellEditorServices.psd1'; Start-EditorServices -HostName 'Visual Studio Code Host' -HostProfileId 'Microsoft.VSCode' -HostVersion '2022.5.1' -AdditionalModules @('PowerShellEditorServices.VSCode') -BundledModulesPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.1\modules' -EnableConsoleRepl -StartupBanner '=====> PowerShell Integrated Console v2022.5.1 <=====
+<<<<<<< HEAD
 ' -LogLevel 'Normal' -LogPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.1\logs\1652805097-0d351be5-3c46-45ab-adad-26906d5394521652804979676\EditorServices.log' -SessionDetailsPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.1\sessions\PSES-VSCode-9080-112695' -FeatureFlags @() 
 Process ID: 9124
+=======
+' -LogLevel 'Normal' -LogPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.1\logs\1652292690-8ecd0819-f72d-441f-aab1-8d2f476ff7581652289401255\EditorServices.log' -SessionDetailsPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2022.5.1\sessions\PSES-VSCode-5692-287780' -FeatureFlags @() 
+Process ID: 4144
+>>>>>>> fa37dd061db4c108f4840c4ace0c6bc68a7d1c91
 PSVersion: 5.1.17763.592
 PSEdition: Desktop
 PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.17763.592
@@ -59,6 +68,7 @@ At line:20 char:15
 ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.RemoveItemCommand
 diese Datei wird nun von Correct-Function gecheckt: C:\Code\postprozessor\Testing\Druecken auf M200\01_vorher\1_SeiteL_Lichtgr_6.535_T01_2.xcs
 HIER STEHT FILE2: C:\Code\postprozessor\Testing\Druecken auf M200\01_vorher\1_SeiteL_Lichtgr_6.535_T01_2.xcs
+<<<<<<< HEAD
 & : The term 'C:\Program Files\SCM Group\Maestro\XConverter.exe' is not recognized as the name of a cmdlet, function, 
 script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is 
 correct and try again.
@@ -103,3 +113,5 @@ ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.Rem
 Windows PowerShell transcript end
 End time: 20220517183151
 **********************
+=======
+>>>>>>> fa37dd061db4c108f4840c4ace0c6bc68a7d1c91

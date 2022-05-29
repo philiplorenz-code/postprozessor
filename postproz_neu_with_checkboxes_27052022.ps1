@@ -510,7 +510,7 @@ function Run-M200 () {
   # HINWEIS: Hier muss man auf m200cb verweisen, da das die Checkbox unter dem M220-Button ist!
   Async {
 					   
-
+    $State.tabIndex = 1
     function Run-Modification {
       param (
         $State,
@@ -821,6 +821,7 @@ function Run-M200 () {
 # X200-spezifische Änderungen
 function Run-X200 () {
   Async {
+    $State.tabIndex = 1
 
     function Run-Modification {
       param (

@@ -526,7 +526,7 @@ function Run-M200 () {
       )
 
       # Logging
-
+      $State.tabIndex = 1
 
       if ($int -eq 2) {
         # Clear CreateRawWorkpiece 
@@ -723,6 +723,8 @@ function Run-M200 () {
     elseif (!$State.m200cb) {
       $path = $State.WorkingDir + "\exportbericht.txt"
       Start-Transcript -Path $path
+
+      $State.tabIndex = 1
       
       # Global Vars
       $count = 0
@@ -1034,6 +1036,7 @@ function Run-X200 () {
       $path = $State.WorkingDir + "\exportbericht.txt"
       Start-Transcript -Path $path
     
+      $State.tabIndex = 1
       # Clear CreateRawWorkpiece 
       if ($State.input -is [array]) {
         foreach ($one in $State.input) {

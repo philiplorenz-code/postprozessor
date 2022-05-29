@@ -626,34 +626,67 @@ function Run-M200 () {
 
 
 
+
       # CNC-Software nativ
-      foreach ($Prog in $State.input) {
-        if ($count -ge 200) {
-          # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
-          
-          convert-xcs-to-pgmx_m200
-          
-          $count = 0
-          $State.Infiles = ""
-          $State.tmpFiles = ""
-          $State.tmpFiles2 = ""
-          $State.outFiles = ""
+      if ($int -eq 1){
+        foreach ($Prog in $State.input) {
+          if ($count -ge 200) {
+            # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+            
+            convert-xcs-to-pgmx_m200
+            
+            $count = 0
+            $State.M200Infiles = ""
+            $State.M200tmpFiles = ""
+            $State.M200tmpFiles2 = ""
+            $State.M200outFiles = ""
+          }
+            
+            
+          $xcsPath = $Prog.CamPath
+          $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+          $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+          $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+            
+            
+          $count += 1
+          [array]$State.M200Infiles += $xcsPath
+          [array]$State.M200outFiles += $pgmxPath
+          [array]$State.M200tmpFiles += $tmpPath
+          [array]$State.M200tmpFiles2 += $tmpPath2
         }
-          
-          
-        $xcsPath = $Prog.CamPath
-        $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
-        $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
-        $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
-          
-          
-        $count += 1
-        [array]$State.Infiles += $xcsPath
-        [array]$State.outFiles += $pgmxPath
-        [array]$State.tmpFiles += $tmpPath
-        [array]$State.tmpFiles2 += $tmpPath2
+        convert-xcs-to-pgmx_m200
       }
-      convert-xcs-to-pgmx_m200
+      elseif ($int -eq 2){
+        foreach ($Prog in $State.input) {
+          if ($count -ge 200) {
+            # Die Kommandozeile darf nicht laenger als 8000 Zeichen werden		
+            
+            convert-xcs-to-pgmx_m200
+            
+            $count = 0
+            $State.X200Infiles = ""
+            $State.X200tmpFiles = ""
+            $State.X200tmpFiles2 = ""
+            $State.X200outFiles = ""
+          }
+            
+            
+          $xcsPath = $Prog.CamPath
+          $pgmxPath = $xcsPath -replace '.xcs$', '.pgmx'
+          $tmpPath = $xcsPath -replace '.xcs$', '__tmp.pgmx'
+          $tmpPath2 = $xcsPath -replace '.xcs$', '__tmp2.pgmx'
+            
+            
+          $count += 1
+          [array]$State.X200Infiles += $xcsPath
+          [array]$State.X200outFiles += $pgmxPath
+          [array]$State.X200tmpFiles += $tmpPath
+          [array]$State.X200tmpFiles2 += $tmpPath2
+        }
+        convert-xcs-to-pgmx_x200
+      }
+
           
       # Kurz warten
       Start-Sleep 1
@@ -751,10 +784,10 @@ function Run-M200 () {
           convert-xcs-to-pgmx_m200
     
           $count = 0
-          $State.Infiles = ""
-          $State.tmpFiles = ""
-          $State.tmpFiles2 = ""
-          $State.outFiles = ""
+          $State.M200Infiles = ""
+          $State.M200tmpFiles = ""
+          $State.M200tmpFiles2 = ""
+          $State.M200outFiles = ""
         }
     
     
@@ -765,10 +798,10 @@ function Run-M200 () {
     
     
         $count += 1
-        [array]$State.Infiles += $xcsPath
-        [array]$State.outFiles += $pgmxPath
-        [array]$State.tmpFiles += $tmpPath
-        [array]$State.tmpFiles2 += $tmpPath2
+        [array]$State.M200Infiles += $xcsPath
+        [array]$State.M200outFiles += $pgmxPath
+        [array]$State.M200tmpFiles += $tmpPath
+        [array]$State.M200tmpFiles2 += $tmpPath2
       }
       convert-xcs-to-pgmx_m200
     

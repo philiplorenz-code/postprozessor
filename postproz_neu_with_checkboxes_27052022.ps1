@@ -184,14 +184,8 @@ function First-Replace {
 # Interaktion mit nativer CNC-Software (X200)
 function convert-xcs-to-pgmx_x200 {
     $debug = $State.WorkingDir + "\dump.txt"
-    "$State.X200Infiles " | Out-File -FilePath $debug
-    $State.X200Infiles | Out-File -FilePath $debug
-    "$State.X200tmpFiles " | Out-File -FilePath $debug
-    $State.X200tmpFiles | Out-File -FilePath $debug
-    "$State.X200tmpFiles2 " | Out-File -FilePath $debug
-    $State.X200tmpFiles2 | Out-File -FilePath $debug
-    "$State.X200outFiles " | Out-File -FilePath $debug
-    $State.X200outFiles | Out-File -FilePath $debug
+    $State | ConvertTo-Json | Out-File -Append -FilePath $debug
+
 
   #XConverter Maestro 64 Bit
   $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'
@@ -199,18 +193,12 @@ function convert-xcs-to-pgmx_x200 {
   $X200 = "C:\Users\Public\Documents\SCM Group\Maestro\Environments\X200"
 
   # Konvertieren in tmp pgmx
-
   & $State.XConverter -ow -s -report -m 0 -i $State.X200Infiles -env $X200 -o $State.X200tmpFiles | Out-Default
 
-
   # Bearbeitungen optimieren
-  "$State.X200tmpFiles2 " | Out-File -FilePath $debug
-  $State.X200tmpFiles2 | Out-File -FilePath $debug
   & $State.XConverter -ow -s -m 2 -i $State.X200tmpFiles -env $X200 -o $State.X200tmpFiles2 | Out-Default
 
   # Sauger positionieren
-  "$State.X200outFiles " | Out-File -FilePath $debug
-  $State.X200outFiles | Out-File -FilePath $debug
   & $State.XConverter -ow -s -m 13 -i $State.X200tmpFiles2 -env $X200 -o $State.X200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
@@ -234,14 +222,7 @@ function convert-xcs-to-pgmx_x200 {
 
 function convert-xcs-to-pgmx_m200 {
     $debug = $State.WorkingDir + "\dump.txt"
-    "$State.M200Infiles " | Out-File -FilePath $debug
-    $State.M200Infiles | Out-File -FilePath $debug
-    "$State.M200tmpFiles " | Out-File -FilePath $debug
-    $State.M200tmpFiles | Out-File -FilePath $debug
-    "$State.M200tmpFiles2 " | Out-File -FilePath $debug
-    $State.M200tmpFiles2 | Out-File -FilePath $debug
-    "$State.M200outFiles " | Out-File -FilePath $debug
-    $State.M200outFiles | Out-File -FilePath $debug
+    $State | ConvertTo-Json | Out-File -Append -FilePath $debug
 
   #XConverter Maestro 64 Bit
   $State.XConverter = 'C:\Program Files\SCM Group\Maestro\XConverter.exe'

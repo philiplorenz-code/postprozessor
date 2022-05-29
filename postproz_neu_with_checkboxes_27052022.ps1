@@ -184,6 +184,7 @@ function First-Replace {
 # Interaktion mit nativer CNC-Software (X200)
 function convert-xcs-to-pgmx_x200 {
     $debug = $State.WorkingDir + "\dump.txt"
+    "convert-xcs-to-pgmx_x200" | ConvertTo-Json | Out-File -Append -FilePath $debug
     $State | ConvertTo-Json | Out-File -Append -FilePath $debug
 
 
@@ -222,6 +223,7 @@ function convert-xcs-to-pgmx_x200 {
 
 function convert-xcs-to-pgmx_m200 {
     $debug = $State.WorkingDir + "\dump.txt"
+    convert-xcs-to-pgmx_m200 | ConvertTo-Json | Out-File -Append -FilePath $debug
     $State | ConvertTo-Json | Out-File -Append -FilePath $debug
 
   #XConverter Maestro 64 Bit

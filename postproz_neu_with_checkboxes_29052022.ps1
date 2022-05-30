@@ -198,8 +198,8 @@ function convert-xcs-to-pgmx_x200 {
   & $State.XConverter -ow -s -m 13 -i $State.X200tmpFiles2 -env $X200 -o $State.X200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-  try {
-<#     Remove-Item $State.X200tmpFiles
+<#   try {
+    Remove-Item $State.X200tmpFiles
   }  catch{
       
 }
@@ -232,7 +232,7 @@ function convert-xcs-to-pgmx_m200 {
   & $State.XConverter -ow -s -m 13 -i $State.M200tmpFiles2 -env $M200 -o $State.M200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-  try {
+<#   try {
     Remove-Item $State.M200tmpFiles
   }
   catch{
@@ -245,7 +245,7 @@ function convert-xcs-to-pgmx_m200 {
   }
   catch{
       
-  }
+  } #>
   
 }
 

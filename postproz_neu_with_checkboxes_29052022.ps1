@@ -819,6 +819,7 @@ function Run-M200 () {
 
 # X200-spezifische Änderungen
 function Run-X200 () {
+  $State.tabIndex = 1
   Async {
 
   function Run-Modification {
@@ -1038,7 +1039,7 @@ function Run-X200 () {
 
     $State2 = clone($State)
     $State2.input = $State.input | Where-Object { $_.CamName -like "*_2.xcs" }
-    #$State.tabIndex = 1
+    
     Run-Modification -State $State1 -int 1
     Run-Modification -State $State2 -int 2
   }

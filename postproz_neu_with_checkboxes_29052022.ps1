@@ -199,7 +199,7 @@ function convert-xcs-to-pgmx_x200 {
 
   # Loesche die temporaeren Dateien
   try {
-    Remove-Item $State.X200tmpFiles
+<#     Remove-Item $State.X200tmpFiles
   }  catch{
       
 }
@@ -210,7 +210,7 @@ function convert-xcs-to-pgmx_x200 {
     Remove-Item $State.X200tmpFiles2
   }  catch{
       
-    }
+    } #>
   
 }
 

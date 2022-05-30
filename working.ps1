@@ -198,7 +198,7 @@ function convert-xcs-to-pgmx_x200 {
   & $State.XConverter -ow -s -m 13 -i $State.X200tmpFiles2 -env $X200 -o $State.X200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-<#   try {
+  try {
     Remove-Item $State.X200tmpFiles
   }  catch{
       
@@ -210,7 +210,7 @@ function convert-xcs-to-pgmx_x200 {
     Remove-Item $State.X200tmpFiles2
   }  catch{
       
-    } #>
+    }
   
 }
 
@@ -232,7 +232,7 @@ function convert-xcs-to-pgmx_m200 {
   & $State.XConverter -ow -s -m 13 -i $State.M200tmpFiles2 -env $M200 -o $State.M200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-<#   try {
+  try {
     Remove-Item $State.M200tmpFiles
   }
   catch{
@@ -245,7 +245,7 @@ function convert-xcs-to-pgmx_m200 {
   }
   catch{
       
-  } #>
+  }
   
 }
 
@@ -708,7 +708,7 @@ function Run-M200 () {
 
       $State2 = clone($State)
       $State2.input = $State.input | Where-Object { $_.CamName -like "*_2.xcs" }
-      $State.tabIndex = 1
+
       Run-Modification -State $State1 -int 1
       Run-Modification -State $State2 -int 2
 
@@ -1038,7 +1038,7 @@ function Run-X200 () {
 
     $State2 = clone($State)
     $State2.input = $State.input | Where-Object { $_.CamName -like "*_2.xcs" }
-    #$State.tabIndex = 1
+
     Run-Modification -State $State1 -int 1
     Run-Modification -State $State2 -int 2
   }

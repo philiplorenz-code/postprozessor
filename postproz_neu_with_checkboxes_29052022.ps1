@@ -237,6 +237,8 @@ function convert-xcs-to-pgmx_m200 {
   }
   catch{
 
+
+    
   }
   
   # Loesche die temporaeren Dateien

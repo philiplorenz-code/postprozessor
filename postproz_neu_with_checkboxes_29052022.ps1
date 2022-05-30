@@ -708,7 +708,7 @@ function Run-M200 () {
 
       $State2 = clone($State)
       $State2.input = $State.input | Where-Object { $_.CamName -like "*_2.xcs" }
-
+      $State.tabIndex = 1
       Run-Modification -State $State1 -int 1
       Run-Modification -State $State2 -int 2
 
@@ -1038,7 +1038,7 @@ function Run-X200 () {
 
     $State2 = clone($State)
     $State2.input = $State.input | Where-Object { $_.CamName -like "*_2.xcs" }
-
+    $State.tabIndex = 1
     Run-Modification -State $State1 -int 1
     Run-Modification -State $State2 -int 2
   }

@@ -124,7 +124,7 @@ function Replace-SetMacroParam() {
           foreach ($line in $content_prog){
               $newcontent += $line
               if ($line -like "*ResetRetractStrategy();*" -and !$found){
-                  $newcontent += 'ApplyTechnology("' + $hashtable.($Technologie) + '")'
+                  $newcontent += 'ApplyTechnology("' + $hashtable.($Technologie) + '");'
                   $found = $true
               }
           }
@@ -164,7 +164,7 @@ function Correct-Offset_2 {
     foreach ($line in $content) {
       if ($line -like "*CreateRawWorkpiece*") {
         $newstring = ($content[$count]) -replace ".{49}$"
-        $newstring = $newstring + "0.0000,0.0000,0.0000,0.0000,0.0000,0.0000);"
+        $newstring = $newstring + " 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000);"
         $content[$count] = $newstring
       }
       if ($line -like "*SetWorkpieceSetupPosition*") {

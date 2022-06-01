@@ -47,36 +47,36 @@ function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, 
 
 # ImplementedButNotCheckedYet: TODO: foreach ($Filename in $State.input.CamPath)!! über Funktion loopen
 function Replace-SetMacroParam() {
-  foreach ($Filename in $State.input) {
-    $FilePath = $Filename.CamPath
-    $Filename = $Filename.CamPath
-    $charCount = ($Filename.ToCharArray() | Where-Object { $_ -eq '_' } | Measure-Object).Count
-    if ($charCount -gt 3) {
-
-      $Filename = Split-Path $Filename -leaf
-      $Elements = $Filename.split('_')
-      
-      $MM = $Elements[3]
-
-      if ($Filename -like "*__T*") {
+  foreach ($path in $State.input) {
+    $filename = Split-Path $path -leaf
+    $split = $filename.split("_")
+    
+    $PosNr = $split[0]
+    $Bauteilname = $split[1]
+    $Material = $split[2]
+    $Fraestiefe = $split[3]
+    $Technologie = $split[4]
+    $ProgrammNr = $split[5]
+    
+    if ([string]::IsNullOrEmpty($Fraestiefe)){
         $MM = 0
-      }
-
-
-      $content = Get-Content $FilePath
-      
-      $output = @()
-      foreach ($string in $content) {
-        $output += $string
-        if ($string -like "*SetMacroParam*Angle*") {
-          $output += 'SetMacroParam("Depth", ' + $MM + ');'
-        }
-
-      }
-
-      Set-Content -Path $FilePath -Value $output
-      
     }
+    else {
+        $MM = $Fraestiefe
+    }
+    
+    # SetMacroParam
+    $content = Get-Content $path
+    $output = @()
+    foreach ($string in $content) {
+      $output += $string
+      if ($string -like "*SetMacroParam*Angle*") {
+        $output += 'SetMacroParam("Depth", ' + $MM + ');'
+      }
+    
+    }
+    Set-Content -Path $FilePath -Value $output
+    
   }
 }
 

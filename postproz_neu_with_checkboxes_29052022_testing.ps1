@@ -865,8 +865,8 @@ function Run-M200 () {
     }
     else {
       Open-Dir
-      Stop-Process -Name *powershell*
       Stop-Transcript
+      Stop-Process -Name *powershell*
     }
   }
 
@@ -1227,8 +1227,8 @@ function Run-X200 () {
   }
   else {
     Open-Dir
-    Stop-Process -Name *powershell*
     Stop-Transcript
+    Stop-Process -Name *powershell*
   }
 
 

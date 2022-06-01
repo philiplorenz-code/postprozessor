@@ -804,10 +804,12 @@ function Run-M200 () {
     }
 
     # Remove TmpFiles
-    try {
-      Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
-      Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
-    } catch {}
+    $errorc = $error.Count
+    Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
+    Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
+    if ($errorc -eq 0){
+      $error.Clear()
+    }
   
     # Error Handling
     if ($error.Count -gt 0) {
@@ -1164,10 +1166,12 @@ function Run-X200 () {
   }
 
   # Remove TmpFiles
-  try {
-    Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
-    Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
-  } catch {}
+  $errorc = $error.Count
+  Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
+  Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
+  if ($errorc -eq 0){
+    $error.Clear()
+  }
 
 
   if ($error.Count -gt 0) {

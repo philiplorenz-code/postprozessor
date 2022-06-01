@@ -82,7 +82,7 @@ function Replace-SetMacroParam() {
 
     # ApplyTechnology
     if (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq 1){
-
+      Write-Host "Technologie ist $Technologie !! und ProgNr ist 1!"
       # Einstellungen für Tech aus Config holen
       $content = Get-Content "C:\Users\WeberT\AppData\Local\PYTHA25.0\configtech.txt"
       $hashtable = @{}
@@ -103,6 +103,7 @@ function Replace-SetMacroParam() {
 
       $content_prog = Get-Content $path
       if(lineinfile -con $content_prog){
+          Write-Host "ResetRetractStrategy() enthalten!"
           $newcontent = @()
           $found = $false
           foreach ($line in $content_prog){

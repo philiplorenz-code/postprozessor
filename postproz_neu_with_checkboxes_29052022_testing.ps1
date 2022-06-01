@@ -570,7 +570,7 @@ function Run-M200 () {
       First-Replace -State $State
 
       #foreach ($Filename in $State.input.CamPath) {
-      #Replace-SetMacroParam
+      Replace-SetMacroParam
       #}
 
       if ($int -eq 1) {
@@ -724,7 +724,7 @@ function Run-M200 () {
     
       $State.tabIndex = 1
       First-Replace -State $State
-      #Replace-SetMacroParam
+      Replace-SetMacroParam
         
     
       Foreach ($Prog in $State.input) {
@@ -901,7 +901,7 @@ function Run-X200 () {
     First-Replace -State $State
 
     #foreach ($Filename in $State.input.CamPath) {
-    #Replace-SetMacroParam
+    Replace-SetMacroParam
     #}
 
     if ($int -eq 2) {
@@ -1119,7 +1119,7 @@ function Run-X200 () {
   
     First-Replace -State $State
     #foreach ($Filename in $State.input.CamPath) {
-    #Replace-SetMacroParam
+    Replace-SetMacroParam
     #}
   
   

@@ -1,41 +1,38 @@
-$path = "1_SeiteL_Lichtgr_6.542_T01_1"
-$path = "_SeiteL____1"
-
-
-
-$filename = Split-Path $path -leaf
-$split = $filename.split("_")
-
-$PosNr = $split[0]
-$Bauteilname = $split[1]
-$Material = $split[2]
-$Fraestiefe = $split[3]
-$Technologie = $split[4]
-$ProgrammNr = $split[5]
-
-if ([string]::IsNullOrEmpty($Fraestiefe)){
-    $MM = 0
-}
-else {
-    $MM = $Fraestiefe
+$content = Get-Content "/Users/philip/Code/postprozessor/testtest/settings.txt"
+$hashtable = @{}
+foreach ($line in $content){
+    $hashtable.Add(($line.Split("_"))[0],$line)
 }
 
-# SetMacroParam
-$content = Get-Content $path
-$output = @()
-foreach ($string in $content) {
-  $output += $string
-  if ($string -like "*SetMacroParam*Angle*") {
-    $output += 'SetMacroParam("Depth", ' + $MM + ');'
-  }
+$string = "T01"
+$hashtable.($string)
 
+
+function lineinfile($con){
+    foreach ($line in $con){
+        if ($line -like "*ResetRetractStrategy();*"){
+            return $true
+        }
+    }
+    return $false
 }
-Set-Content -Path $FilePath -Value $output
+
+
+$path = "/Users/philip/Code/postprozessor/testtest/content.txt"
+$content_prog = Get-Content $path
+if(lineinfile -con $content_prog){
+    $newcontent = @()
+    $found = $false
+    foreach ($line in $content_prog){
+        $newcontent += $line
+        if ($line -like "*ResetRetractStrategy();*" -and !$found){
+            $newcontent += 'ApplyTechnology(”' + $hashtable.($Technologie) + '”)'
+            $found = $true
+        }
+    }
+    Set-Content -Value $newcontent -Path $path
+}
 
 
 
-$string = "_SeiteL____1"
-$split = $string.split("_")
-
-
-Split-Path $outputPath -leaf
+$Technologie = "T01"

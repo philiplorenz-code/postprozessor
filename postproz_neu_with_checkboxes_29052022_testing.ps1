@@ -805,8 +805,8 @@ function Run-M200 () {
 
     # Remove TmpFiles
     try {
-      Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
-      Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
+      Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
+      Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
     } catch {}
   
     # Error Handling
@@ -1165,8 +1165,8 @@ function Run-X200 () {
 
   # Remove TmpFiles
   try {
-    Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
-    Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
+    Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
+    Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue}
   } catch {}
 
 

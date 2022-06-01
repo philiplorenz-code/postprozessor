@@ -46,6 +46,7 @@ function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, 
 
 
 # ImplementedButNotCheckedYet: TODO: foreach ($Filename in $State.input.CamPath)!! über Funktion loopen
+# Hier wird außerdem der TEchnologie-Stuff gemacht!!
 function Replace-SetMacroParam() {
   foreach ($pathCam in $State.input) {
     $path = $pathCam.CamPath
@@ -77,6 +78,43 @@ function Replace-SetMacroParam() {
     
     }
     Set-Content -Path $path -Value $output
+
+
+    # ApplyTechnology
+    if (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq 1){
+
+      # Einstellungen für Tech aus Config holen
+      $content = Get-Content "C:\Users\WeberT\AppData\Local\PYTHA25.0\configtech.txt"
+      $hashtable = @{}
+      foreach ($line in $content){
+          $hashtable.Add(($line.Split("_"))[0],$line)
+      }
+
+      # Check Function 
+      function lineinfile($con){
+        foreach ($line in $con){
+            if ($line -like "*ResetRetractStrategy();*"){
+                return $true
+            }
+        }
+        return $false
+      }
+
+
+      $content_prog = Get-Content $path
+      if(lineinfile -con $content_prog){
+          $newcontent = @()
+          $found = $false
+          foreach ($line in $content_prog){
+              $newcontent += $line
+              if ($line -like "*ResetRetractStrategy();*" -and !$found){
+                  $newcontent += 'ApplyTechnology(”' + $hashtable.($Technologie) + '”)'
+                  $found = $true
+              }
+          }
+          Set-Content -Value $newcontent -Path $path
+      }
+    }
     
   }
 }

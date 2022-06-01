@@ -92,7 +92,7 @@ function Set-Exlamationmarks {
     $filename = "!!!" + ((Get-Item $textfile).Name)
     $newsave = $dir + "\" + $filename
     $content | Out-File $newsave
-    Remove-Item $textfile
+    #Remove-Item $textfile
   }
 }
 
@@ -198,7 +198,7 @@ function convert-xcs-to-pgmx_x200 {
   & $State.XConverter -ow -s -m 13 -i $State.X200tmpFiles2 -env $X200 -o $State.X200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-  try {
+<#   try {
     Remove-Item $State.X200tmpFiles
   }  catch{
       
@@ -210,7 +210,7 @@ function convert-xcs-to-pgmx_x200 {
     Remove-Item $State.X200tmpFiles2
   }  catch{
       
-    }
+    } #>
   
 }
 
@@ -232,7 +232,7 @@ function convert-xcs-to-pgmx_m200 {
   & $State.XConverter -ow -s -m 13 -i $State.M200tmpFiles2 -env $M200 -o $State.M200outFiles | Out-Default
 
   # Loesche die temporaeren Dateien
-  try {
+<#   try {
     Remove-Item $State.M200tmpFiles
   }
   catch{
@@ -247,7 +247,7 @@ function convert-xcs-to-pgmx_m200 {
   }
   catch{
       
-  }
+  } #>
   
 }
 
@@ -529,7 +529,7 @@ function Run-M200 () {
             $temppath = $State.WorkingDir + "\temp.xcs"
             Get-Content $one.CamPath | Where-Object { $_ -notlike 'CreateRawWorkpiece*' } | Set-Content $temppath
             Get-Content $temppath | Set-Content $one.CamPath
-            Remove-Item $temppath
+            #Remove-Item $temppath
           }
       
         }
@@ -537,7 +537,7 @@ function Run-M200 () {
           $temppath = $State.WorkingDir + "\temp.xcs"
           Get-Content $State.input.CamPath | Where-Object { $_ -notlike 'CreateRawWorkpiece*' } | Set-Content $temppath
           Get-Content $temppath | Set-Content $State.input.CamPath
-          Remove-Item $temppath
+          #Remove-Item $temppath
         }
 
         # Edit Set MachineParameters
@@ -548,7 +548,7 @@ function Run-M200 () {
             'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
             $currentcontent | Add-Content $temppath
             Get-Content $temppath | Set-Content $one.CamPath
-            Remove-Item $temppath
+            #Remove-Item $temppath
           }
         
         }
@@ -558,7 +558,7 @@ function Run-M200 () {
           'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
           $currentcontent | Add-Content $temppath
           Get-Content $temppath | Set-Content $State.input.CamPath
-          Remove-Item $temppath
+          #Remove-Item $temppath
         }
       }
 
@@ -594,7 +594,7 @@ function Run-M200 () {
             'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
             $currentcontent | Add-Content $temppath
             Get-Content $temppath | Set-Content $one.CamPath
-            Remove-Item $temppath
+            #Remove-Item $temppath
           }
         
         }
@@ -605,7 +605,7 @@ function Run-M200 () {
           'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
           $currentcontent | Add-Content $temppath
           Get-Content $temppath | Set-Content $State.input.CamPath
-          Remove-Item $temppath
+          #Remove-Item $temppath
         }
       }
         
@@ -747,7 +747,7 @@ function Run-M200 () {
           'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
           $currentcontent | Add-Content $temppath
           Get-Content $temppath | Set-Content $one.CamPath
-          Remove-Item $temppath
+          #Remove-Item $temppath
         }
       
       }
@@ -758,7 +758,7 @@ function Run-M200 () {
         'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
         $currentcontent | Add-Content $temppath
         Get-Content $temppath | Set-Content $State.input.CamPath
-        Remove-Item $temppath
+        #Remove-Item $temppath
       }
         
     
@@ -802,6 +802,10 @@ function Run-M200 () {
       # Kurz warten
       Start-Sleep 1
     }
+
+    # Remove TmpFiles
+    Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName }
+    Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName }
   
     # Error Handling
     if ($error.Count -gt 0) {
@@ -840,7 +844,7 @@ function Run-X200 () {
           $temppath = $State.WorkingDir + "\temp.xcs"
           Get-Content $one.CamPath | Where-Object { $_ -notlike 'CreateRawWorkpiece*' } | Set-Content $temppath
           Get-Content $temppath | Set-Content $one.CamPath
-          Remove-Item $temppath
+          #Remove-Item $temppath
    
 
 									
@@ -861,7 +865,7 @@ function Run-X200 () {
         $temppath = $State.WorkingDir + "\temp.xcs"
         Get-Content $State.input.CamPath | Where-Object { $_ -notlike 'CreateRawWorkpiece*' } | Set-Content $temppath
         Get-Content $temppath | Set-Content $State.input.CamPath
-        Remove-Item $temppath
+        #Remove-Item $temppath
       }
 
       # Edit Set MachineParameters
@@ -872,7 +876,7 @@ function Run-X200 () {
           'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
           $currentcontent | Add-Content $temppath
           Get-Content $temppath | Set-Content $one.CamPath
-          Remove-Item $temppath
+          #Remove-Item $temppath
         }
       
       }
@@ -882,7 +886,7 @@ function Run-X200 () {
         'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
         $currentcontent | Add-Content $temppath
         Get-Content $temppath | Set-Content $State.input.CamPath
-        Remove-Item $temppath
+        #Remove-Item $temppath
       }
     }
     # Global Vars
@@ -928,7 +932,7 @@ function Run-X200 () {
           'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
           $currentcontent | Add-Content $temppath
           Get-Content $temppath | Set-Content $one.CamPath
-          Remove-Item $temppath
+          #Remove-Item $temppath
         }
       
       }
@@ -939,7 +943,7 @@ function Run-X200 () {
         'SetMachiningParameters("AB", 1, 12, 16973824, false);' | Set-Content $temppath
         $currentcontent | Add-Content $temppath
         Get-Content $temppath | Set-Content $State.input.CamPath
-        Remove-Item $temppath
+        #Remove-Item $temppath
       }
     }
         
@@ -1066,7 +1070,7 @@ function Run-X200 () {
         $temppath = $State.WorkingDir + "\temp.xcs"
         Get-Content $one.CamPath | Where-Object { $_ -notlike 'CreateRawWorkpiece*' } | Set-Content $temppath
         Get-Content $temppath | Set-Content $one.CamPath
-        Remove-Item $temppath
+        #Remove-Item $temppath
       }
   
     }
@@ -1077,7 +1081,7 @@ function Run-X200 () {
 																						 
 												 
       Get-Content $temppath | Set-Content $State.input.CamPath
-      Remove-Item $temppath
+      #Remove-Item $temppath
     }
   
     # Edit Set MachineParameters
@@ -1088,7 +1092,7 @@ function Run-X200 () {
         'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
         $currentcontent | Add-Content $temppath
         Get-Content $temppath | Set-Content $one.CamPath
-        Remove-Item $temppath
+        #Remove-Item $temppath
       }
   
     }
@@ -1098,7 +1102,7 @@ function Run-X200 () {
       'SetMachiningParameters("AB", 1, 10, 16777216, false);' | Set-Content $temppath
       $currentcontent | Add-Content $temppath
       Get-Content $temppath | Set-Content $State.input.CamPath
-      Remove-Item $temppath
+      #Remove-Item $temppath
     }
   
     # Global Vars
@@ -1157,7 +1161,10 @@ function Run-X200 () {
   
   }
 
-    
+  # Remove TmpFiles
+  Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName }
+  Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName }
+
   if ($error.Count -gt 0) {
     $State.tabIndex = 2
     Stop-Transcript

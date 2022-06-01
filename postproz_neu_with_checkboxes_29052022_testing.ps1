@@ -52,13 +52,17 @@ function Replace-SetMacroParam() {
     $path = $pathCam.CamPath
     $filename = Split-Path $path -leaf
     $split = $filename.split("_")
-    
+    $path | Out-File -Path "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
     $PosNr = $split[0]
     $Bauteilname = $split[1]
     $Material = $split[2]
     $Fraestiefe = $split[3]
     $Technologie = $split[4]
     $ProgrammNr = $split[5]
+
+    $Technologie | Out-File -Path "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
+
+    $error | Out-File -Path "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
     
     if ([string]::IsNullOrEmpty($Fraestiefe)){
         $MM = 0
@@ -83,6 +87,8 @@ function Replace-SetMacroParam() {
     # ApplyTechnology
     if (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq 1){
       Write-Host "Technologie ist $Technologie !! und ProgNr ist 1!"
+
+      "Technologie ist $Technologie !! und ProgNr ist 1!" | Out-File -Path "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
       # Einstellungen für Tech aus Config holen
       $content = Get-Content "C:\Users\WeberT\AppData\Local\PYTHA25.0\configtech.txt"
       $hashtable = @{}

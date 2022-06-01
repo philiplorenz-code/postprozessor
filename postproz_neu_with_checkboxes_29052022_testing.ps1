@@ -124,7 +124,7 @@ function Replace-SetMacroParam() {
           foreach ($line in $content_prog){
               $newcontent += $line
               if ($line -like "*ResetRetractStrategy();*" -and !$found){
-                  $newcontent += 'ApplyTechnology(”' + $hashtable.($Technologie) + '”)'
+                  $newcontent += 'ApplyTechnology("' + $hashtable.($Technologie) + '")'
                   $found = $true
               }
           }
@@ -324,8 +324,8 @@ $Xaml = @"
           <Image HorizontalAlignment="Left" Height="171" VerticalAlignment="Top" Width="313" Margin="395,210,0,0" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\m200.png" Name="m200"/>
           <Image HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="40" Margin="722,406,0,0" Name="icon1" Source="C:\usr\Texturen GS Ravensburg\Geraete+Sonstiges\icon.png"/>
           <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Gewerbliche Schule Ravensburg" Margin="387,414,0,0" Name="IconText1" FontFamily="Yu Gothic UI Bold *" FontSize="021" FontWeight="DemiBold"/>
-          <CheckBox HorizontalAlignment="Left" Name="m200cb" VerticalAlignment="Top" Content="Run M200 for _2" Margin="38,143,0,0"/>
-          <CheckBox HorizontalAlignment="Left" Name="x200cb" VerticalAlignment="Top" Content="Run X200 for _2" Margin="40,325,0,0"/>
+          <CheckBox HorizontalAlignment="Left" Name="m200cb" VerticalAlignment="Top" Content="Zweitseitenbearbeitung mit M200" Margin="38,143,0,0"/>
+          <CheckBox HorizontalAlignment="Left" Name="x200cb" VerticalAlignment="Top" Content="Zweitseitenbearbeitung mit X200" Margin="40,325,0,0"/>
         </Grid>
       </TabItem>
       <TabItem Visibility="Collapsed" Header="Fortschritt">

@@ -804,8 +804,10 @@ function Run-M200 () {
     }
 
     # Remove TmpFiles
-    Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName }
-    Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName }
+    try {
+      Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
+      Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
+    } catch {}
   
     # Error Handling
     if ($error.Count -gt 0) {
@@ -1162,8 +1164,11 @@ function Run-X200 () {
   }
 
   # Remove TmpFiles
-  Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
-  Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
+  try {
+    Get-ChildItem -Path $State.WorkingDir *tmp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
+    Get-ChildItem -Path $State.WorkingDir *temp* | ForEach-Object { Remove-Item -Path $_.FullName -Force}
+  } catch {}
+
 
   if ($error.Count -gt 0) {
     $State.tabIndex = 2

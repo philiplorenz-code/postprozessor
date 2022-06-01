@@ -47,7 +47,8 @@ function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, 
 
 # ImplementedButNotCheckedYet: TODO: foreach ($Filename in $State.input.CamPath)!! über Funktion loopen
 function Replace-SetMacroParam() {
-  foreach ($path in $State.input) {
+  foreach ($pathCam in $State.input) {
+    $path = $pathCam.CamPath
     $filename = Split-Path $path -leaf
     $split = $filename.split("_")
     

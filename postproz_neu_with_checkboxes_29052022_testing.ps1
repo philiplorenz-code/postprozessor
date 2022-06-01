@@ -76,7 +76,7 @@ function Replace-SetMacroParam() {
       }
     
     }
-    Set-Content -Path $FilePath -Value $output
+    Set-Content -Path $path -Value $output
     
   }
 }

@@ -89,7 +89,7 @@ function Replace-SetMacroParam() {
 
 
     # ApplyTechnology
-    if (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq 1){
+    if (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq "1.xcs"){
       Write-Host "Technologie ist $Technologie !! und ProgNr ist 1!"
 
       "Technologie ist $Technologie !! und ProgNr ist 1!" | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append

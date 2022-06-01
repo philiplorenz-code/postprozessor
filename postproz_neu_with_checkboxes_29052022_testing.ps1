@@ -63,6 +63,10 @@ function Replace-SetMacroParam() {
     $Technologie | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
 
     $error | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
+
+    (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq 1) | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
+    $ProgrammNr | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
+
     
     if ([string]::IsNullOrEmpty($Fraestiefe)){
         $MM = 0

@@ -1,1 +1,1 @@
-$PSScriptRoot
+Join-path $PSScriptRoot "configtech.txt"

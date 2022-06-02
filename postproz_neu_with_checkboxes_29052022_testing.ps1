@@ -94,7 +94,8 @@ function Replace-SetMacroParam() {
 
       "Technologie ist $Technologie !! und ProgNr ist 1!" | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
       # Einstellungen für Tech aus Config holen
-      $content = Get-Content "C:\Users\WeberT\AppData\Local\PYTHA25.0\configtech.txt"
+      $configpath = Join-path $PSScriptRoot "configtech.txt"
+      $content = Get-Content $configpath
 
       "Content:" | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
 

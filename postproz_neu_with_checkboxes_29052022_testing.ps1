@@ -94,7 +94,7 @@ function Replace-SetMacroParam() {
 
       "Technologie ist $Technologie !! und ProgNr ist 1!" | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
       # Einstellungen für Tech aus Config holen
-      $configpath = Join-path $PSScriptRoot "configtech.txt"
+      $configpath = Join-path $State.PSScriptRoot "configtech.txt"
       $content = Get-Content $configpath
 
       "Content:" | Out-File -FilePath "C:\Users\WeberT\AppData\Local\PYTHA25.0\logs\log.txt" -Append
@@ -436,14 +436,15 @@ $DataObject = ConvertFrom-Json @"
     "WorkingDirTemp" : null,
     "input" : null,
     "x200cb" : false,
-    "m200cb" : false
+    "m200cb" : false,
+    "PSScriptRoot" : null
     
 }
 
 "@
 
 $DataContext = New-Object System.Collections.ObjectModel.ObservableCollection[Object]
-FillDataContext @("tabIndex", "GlobalError", "Systempath", "SystemCommand", "SystemProfile", "Program", "XConverter", "Infiles", "tmpFiles", "tmpFiles2", "outFiles", "Tooling", "WorkingDir", "WorkingDirTemp", "input", "M200Infiles", "X200Infiles", "M200tmpFiles", "X200tmpFiles", "M200tmpFiles2", "X200tmpFiles2", "M200outFiles", "X200outFiles", "x200cb", "m200cb")
+FillDataContext @("tabIndex", "GlobalError", "Systempath", "SystemCommand", "SystemProfile", "Program", "XConverter", "Infiles", "tmpFiles", "tmpFiles2", "outFiles", "Tooling", "WorkingDir", "WorkingDirTemp", "input", "M200Infiles", "X200Infiles", "M200tmpFiles", "X200tmpFiles", "M200tmpFiles2", "X200tmpFiles2", "M200outFiles", "X200outFiles", "x200cb", "m200cb", "PSScriptRoot")
 
 
 $Window.DataContext = $DataContext
@@ -565,6 +566,7 @@ else {
 
 # M200-spezifische Änderungen
 function Run-M200 () {
+  $State.PSScriptRoot = $PSScriptRoot
   # HINWEIS: Hier muss man auf m200cb verweisen, da das die Checkbox unter dem M220-Button ist!
   Async {
 					   
@@ -885,6 +887,7 @@ function Run-M200 () {
 
 # X200-spezifische Änderungen
 function Run-X200 () {
+  $State.PSScriptRoot = $PSScriptRoot
   $State.tabIndex = 1
   Async {
 

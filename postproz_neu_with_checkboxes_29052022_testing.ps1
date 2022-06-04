@@ -10,7 +10,13 @@ param(
 #-------------------------------------------------------------#
 $inputjson = $input
 
-
+function Write-ToLog {
+  param(
+    [string]$logmessage
+  )
+  $logmessage = ((Get-Date).ToString()) + $logmessage
+  $logmessage | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+}
 # Ermöglicht es einen Text vor einem definierten anderen Text einzufügen
 function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, [boolean]$bc) {
   $content = Get-Content $textfile

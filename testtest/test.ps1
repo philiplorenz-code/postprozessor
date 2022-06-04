@@ -11,6 +11,6 @@ function Write-ToLog {
     $logmessage | Out-File -Append -FilePath (Join-path $PSScriptRoot "logs" "log.log")
   }
 
+Get-ADComputer
 
-
-Write-ToLog -logmessage "Test"
+Write-ToLog -logmessage ($error[0].ToString() + $error[0].InvocationInfo.PositionMessage)

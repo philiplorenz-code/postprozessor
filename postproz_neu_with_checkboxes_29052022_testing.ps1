@@ -877,6 +877,7 @@ function Run-M200 () {
   
     # Error Handling
     if ($error.Count -gt 0) {
+      Write-ToLog -logmessage ($error[0].ToString() + $error[0].InvocationInfo.PositionMessage)
       $State.tabIndex = 2
       Stop-Transcript
       Open-Dir
@@ -1240,6 +1241,7 @@ function Run-X200 () {
 
 
   if ($error.Count -gt 0) {
+    Write-ToLog -logmessage ($error[0].ToString() + $error[0].InvocationInfo.PositionMessage)
     $State.tabIndex = 2
     Stop-Transcript
     Open-Dir

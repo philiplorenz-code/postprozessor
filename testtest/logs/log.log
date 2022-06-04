@@ -1,5 +1,0 @@
-6/4/2022 11:37:42 AMTest
-6/4/2022 11:47:50 AMThe term 'Get-ADComputer' is not recognized as a name of a cmdlet, function, script file, or executable program.
-Check the spelling of the name, or if a path was included, verify that the path is correct and try again.At /Users/philip/Code/postprozessor/testtest/test.ps1:14 char:1
-+ Get-ADComputer
-+ ~~~~~~~~~~~~~~

@@ -15,7 +15,7 @@ function Write-ToLog {
     [string]$logmessage
   )
   $logmessage = ((Get-Date).ToString()) + $logmessage
-  $logmessage | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+  $logmessage | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
 }
 # Ermöglicht es einen Text vor einem definierten anderen Text einzufügen
 function Add-StringBefore ([array]$insert, [string]$keyword, [string]$textfile, [boolean]$bc) {
@@ -57,7 +57,7 @@ function Replace-SetMacroParam() {
     $path = $pathCam.CamPath
     $filename = Split-Path $path -leaf
     $split = $filename.split("_")
-    $path | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+    $path | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
     $PosNr = $split[0]
     $Bauteilname = $split[1]
     $Material = $split[2]
@@ -65,12 +65,12 @@ function Replace-SetMacroParam() {
     $Technologie = $split[4]
     $ProgrammNr = $split[5]
 
-    $Technologie | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+    $Technologie | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
 
-    $error | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+    $error | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
 
-    (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq 1) | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
-    $ProgrammNr | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+    (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq 1) | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
+    $ProgrammNr | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
 
     
     if ([string]::IsNullOrEmpty($Fraestiefe)) {
@@ -97,14 +97,14 @@ function Replace-SetMacroParam() {
     if (![string]::IsNullOrEmpty($Technologie) -and $ProgrammNr -eq "1.xcs") {
       Write-Host "Technologie ist $Technologie !! und ProgNr ist 1!"
 
-      "Technologie ist $Technologie !! und ProgNr ist 1!" | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+      "Technologie ist $Technologie !! und ProgNr ist 1!" | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
       # Einstellungen für Tech aus Config holen
       $configpath = Join-path $State.PSScriptRoot "configtech.txt"
       $content = Get-Content $configpath
 
-      "Content:" | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+      "Content:" | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
 
-      $content | Out-File -Append -FilePath (Join-path $State.PSScriptRoot "logs" "log.log")
+      $content | Out-File -Append -FilePath ([IO.Path]::Combine($State.PSScriptRoot, "logs", "log.log"))
 
       $hashtable = @{}
       foreach ($line in $content) {
